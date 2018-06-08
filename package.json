@@ -18,7 +18,7 @@
     "heroku-postbuild": "cp -r build/web/. public",
     "lint:es": "eslint src",
     "lint:style": "stylelint 'src/**/*.css'",
-    "postinstall": "npm run build:web",
+    "postinstall": "npm test && npm run build:web",
     "precommit": "lint-staged",
     "start": "node src/server/index.js",
     "test": "jest",
