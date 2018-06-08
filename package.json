@@ -1,11 +1,11 @@
 {
-  "name": "pixiplate",
-  "version": "0.0.1",
-  "description": "Pixi boilerplate.",
+  "name": "tetro",
+  "version": "0.0.2",
+  "description": "Tetris game.",
   "author": "Igor Skuhar",
   "private": true,
-  "bugs": "https://github.com/igorskuhar/pixiplate/issues",
-  "repository": "https://github.com/igorskuhar/pixiplate.git",
+  "bugs": "https://github.com/igorskuhar/tetro/issues",
+  "repository": "https://github.com/igorskuhar/tetro.git",
   "license": "MIT",
   "engines": {
     "node": "8.11.2"
@@ -67,7 +67,7 @@
     "webpack-serve": "^1.0.2"
   },
   "dependencies": {
-    "pixi.js": "^4.8.0",
-    "redux": "^4.0.0"
+    "gsap": "^2.0.1",
+    "pixi.js": "^4.8.0"
   }
 }

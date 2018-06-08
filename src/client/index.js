@@ -1,4 +1,6 @@
 import * as PIXI from 'pixi.js';
+// import { TweenMax } from 'gsap';
+// import 'gsap/PixiPlugin';
 import './style.css';
 
 const app = new PIXI.Application({
@@ -18,10 +20,10 @@ window.addEventListener('resize', () => {
   app.renderer.resize(window.innerWidth, window.innerHeight);
 });
 
-function step(dt) {
+function tick(dt) {
   console.log(dt);
 }
 
 PIXI.loader.add([]).load(() => {
-  app.ticker.add(step);
+  app.ticker.add(() => tick(app.ticker.elapsedMS));
 });
