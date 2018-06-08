@@ -1,11 +1,11 @@
 {
-  "name": "pixiplate",
+  "name": "tetro",
   "version": "0.0.1",
-  "description": "Pixi boilerplate.",
+  "description": "Tetris game.",
   "author": "Igor Skuhar",
   "private": true,
-  "bugs": "https://github.com/igorskuhar/pixiplate/issues",
-  "repository": "https://github.com/igorskuhar/pixiplate.git",
+  "bugs": "https://github.com/igorskuhar/tetro/issues",
+  "repository": "https://github.com/igorskuhar/tetro.git",
   "license": "MIT",
   "engines": {
     "node": "8.11.2"
