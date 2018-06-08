@@ -43,7 +43,7 @@ module.exports = {
     ]),
     new HtmlPlugin({
       template: HtmlTemplate,
-      title: 'Pixiplate',
+      title: 'Tetro',
       inject: false,
       mobile: true
     })
