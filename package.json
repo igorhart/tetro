@@ -67,6 +67,7 @@
     "webpack-serve": "^1.0.2"
   },
   "dependencies": {
+    "gsap": "^2.0.1",
     "pixi.js": "^4.8.0"
   }
 }

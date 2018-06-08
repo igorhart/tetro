@@ -1,4 +1,6 @@
 import * as PIXI from 'pixi.js';
+// import { TweenMax } from 'gsap';
+// import 'gsap/PixiPlugin';
 import './style.css';
 
 const app = new PIXI.Application({
