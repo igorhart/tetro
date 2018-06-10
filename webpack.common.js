@@ -38,7 +38,8 @@ module.exports = {
       {
         context: buildPaths.client,
         from: 'assets',
-        to: 'assets'
+        to: 'assets',
+        ignore: ['*.js']
       }
     ]),
     new HtmlPlugin({
