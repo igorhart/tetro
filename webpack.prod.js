@@ -43,7 +43,8 @@ module.exports = merge(common, {
     new MiniCssExtractPlugin({ filename: '[name].[contenthash:8].css' }),
     new webpack.DefinePlugin({
       'process.env.BABEL_ENV': JSON.stringify('production'),
-      'process.env.NODE_ENV': JSON.stringify('production')
+      'process.env.NODE_ENV': JSON.stringify('production'),
+      VERSION: JSON.stringify(process.env.npm_package_version)
     })
   ],
   output: {

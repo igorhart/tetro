@@ -1,7 +1,7 @@
 {
   "name": "tetro",
-  "version": "0.0.4",
-  "description": "Tetris game.",
+  "version": "0.0.5",
+  "description": "Retro Tetris game.",
   "author": "Igor Skuhar",
   "private": true,
   "bugs": "https://github.com/igorskuhar/tetro/issues",
@@ -37,6 +37,7 @@
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
     "babel-plugin-module-resolver": "^3.1.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "clean-webpack-plugin": "^0.1.19",
     "copy-webpack-plugin": "^4.5.1",
@@ -70,6 +71,7 @@
   "dependencies": {
     "express": "^4.16.3",
     "gsap": "^2.0.1",
+    "pixi-filters": "^2.6.1",
     "pixi.js": "^4.8.0"
   }
 }
