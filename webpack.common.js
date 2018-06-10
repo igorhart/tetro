@@ -39,14 +39,15 @@ module.exports = {
         context: buildPaths.client,
         from: 'assets',
         to: 'assets',
-        ignore: ['*.js']
+        ignore: ['*.js', '.DS_Store']
       }
     ]),
     new HtmlPlugin({
       template: HtmlTemplate,
       title: 'Tetro',
       inject: false,
-      mobile: true
+      mobile: true,
+      favicon: 'src/client/favicon.ico'
     })
   ],
   output: {
