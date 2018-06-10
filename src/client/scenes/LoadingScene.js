@@ -73,6 +73,7 @@ export default class LoadingScene extends Scene {
     TweenMax.to(this._preloader.progressBar, 0.5, {
       alpha: 0,
       ease: RoughEase.ease.config({ points: 20, strength: 10, randomize: true, clamp: true }),
+      delay: 0.5,
       onComplete: () => {
         this.app.ticker.remove(this.onTick);
         super.onExit(cb);
