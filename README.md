@@ -1,3 +1,3 @@
 # tetro
 
-Tetris game.
+Retro tetris game.
