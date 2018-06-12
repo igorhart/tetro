@@ -1,6 +1,6 @@
 import { loader } from 'pixi.js';
 import { RoughEase, TweenMax } from 'gsap/all';
-import Preloader from 'client/modules/Preloader';
+import Preloader from 'client/gui/Preloader';
 import Scene from 'client/modules/Scene';
 import assets from 'client/assets';
 
@@ -37,7 +37,7 @@ export default class LoadingScene extends Scene {
     //   progress: 100,
     //   ease: SteppedEase.config(12),
     //   onComplete: () => {
-    //     this._sceneManager.loadScene('soloGame');
+    //     this._sceneManager.loadScene('controls');
     //   }
     // });
 
@@ -48,15 +48,13 @@ export default class LoadingScene extends Scene {
           this._preloader.progress = loader.progress;
         })
         .on('complete', () => {
-          // TODO: .loadScene('mainMenu') when ready
-          this.sceneManager.loadScene('soloGame');
+          this.sceneManager.loadScene('controls');
         })
         .load();
     } else {
       this._preloader.progress = 100;
       setTimeout(() => {
-        // TODO: .loadScene('mainMenu') when ready
-        this.sceneManager.loadScene('soloGame');
+        this.sceneManager.loadScene('controls');
       });
     }
   }

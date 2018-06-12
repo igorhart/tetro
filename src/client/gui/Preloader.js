@@ -16,7 +16,7 @@ export default class Preloader extends Container {
 
   createProgressBar() {
     const res = settings.RESOLUTION;
-    const glowFilter = new GlowFilter(5 * res, 1, 0, 0xfe2880, 1);
+    const glowFilter = new GlowFilter(10 * res, 1, 0, 0xfe2880, 1);
     this.pivot.set(48, 32);
 
     const progressBackground = new Graphics();

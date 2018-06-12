@@ -11,12 +11,14 @@ export default class SceneManager {
 
   addScene(scene) {
     this._scenes[scene.id] = scene;
+    return this;
   }
 
   loadScene(sceneId) {
     if (!this._scenes[sceneId]) {
       throw new Error(`Unknown scene: ${sceneId}`);
     }
+
     // destroy current scene
     if (this._currentScene !== null) {
       const prevScene = this._currentScene;
@@ -29,7 +31,7 @@ export default class SceneManager {
     const nextScene = new this._scenes[sceneId].constructor({ id: sceneId, sceneManager: this });
     this._app.stage.addChild(nextScene);
     this._currentScene = nextScene;
-    // ???
-    // nextScene.onEnter();
+
+    return this;
   }
 }
