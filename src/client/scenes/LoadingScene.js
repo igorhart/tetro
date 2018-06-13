@@ -35,19 +35,21 @@ export default class LoadingScene extends Scene {
     // simulate loading
     // TweenMax.to(this._preloader, 5, {
     //   progress: 100,
-    //   ease: SteppedEase.config(12),
+    //   ease: SteppedEase.config(10),
     //   onComplete: () => {
     //     this._sceneManager.loadScene('controls');
     //   }
     // });
 
     if (assets.length) {
+      // TODO: move loader logic into AssetManager singleton and call AssetManager.load(() => ...)
       loader
         .add(assets)
         .on('progress', () => {
           this._preloader.progress = loader.progress;
         })
         .on('complete', () => {
+          // TODO: prepare audio files with sound.js before continuing
           this.sceneManager.loadScene('controls');
         })
         .load();
