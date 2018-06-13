@@ -1,5 +1,6 @@
 import { Container, Graphics, settings } from 'pixi.js';
 import { GlowFilter } from 'pixi-filters';
+import { colors, GLOW_PADDING } from 'client/constants';
 
 export default class Preloader extends Container {
   constructor({ progress } = { progress: 0 }) {
@@ -16,7 +17,7 @@ export default class Preloader extends Container {
 
   createProgressBar() {
     const res = settings.RESOLUTION;
-    const glowFilter = new GlowFilter(10 * res, 1, 0, 0xfe2880, 1);
+    const glowFilter = new GlowFilter(10 * res, 1, 0, colors.PRELOADER, 1);
     this.pivot.set(48, 32);
 
     const progressBackground = new Graphics();
@@ -32,9 +33,9 @@ export default class Preloader extends Container {
 
     // because otherwise glow filter is clipped by the container... :/
     const spacer = new Graphics();
-    spacer.position.set(-10, -10);
+    spacer.position.set(-GLOW_PADDING, -GLOW_PADDING);
     spacer.beginFill(0x000000, 0);
-    spacer.drawRect(0, 0, 116, 84);
+    spacer.drawRect(0, 0, 96 + GLOW_PADDING * 2, 64 + GLOW_PADDING * 2);
     spacer.endFill();
     progressContainer.addChild(spacer);
 

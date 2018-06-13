@@ -1,6 +1,6 @@
 import { Container, Graphics, settings } from 'pixi.js';
 import { GlowFilter } from 'pixi-filters';
-import { BLOCK_SIZE, BLOCK_GAP, GRID_COLOR, GRID_COLS, GRID_ROWS } from 'client/constants';
+import { BLOCK_SIZE, BLOCK_GAP, colors, GRID_COLS, GRID_ROWS } from 'client/constants';
 
 export default class Grid extends Container {
   constructor() {
@@ -9,13 +9,12 @@ export default class Grid extends Container {
     this.createGrid();
   }
 
-  // put grid
   createGrid() {
     const res = settings.RESOLUTION;
-    const glowFilter = new GlowFilter(10 * res, 1, 0, GRID_COLOR, 1);
+    const glowFilter = new GlowFilter(10 * res, 1, 0, colors.GRID, 1);
 
     const lines = new Graphics();
-    lines.beginFill(GRID_COLOR, 1);
+    lines.beginFill(colors.GRID, 1);
     lines.drawRect(0, 0, BLOCK_GAP * 2, GRID_ROWS * (BLOCK_SIZE + BLOCK_GAP) + BLOCK_GAP);
     lines.drawRect(
       GRID_COLS * (BLOCK_SIZE + BLOCK_GAP) + BLOCK_GAP,
@@ -50,9 +49,9 @@ export default class Grid extends Container {
     this.addChild(lines);
 
     const spacer = new Graphics();
-    spacer.position.set(-25, -25);
+    spacer.position.set(-20, -20);
     spacer.beginFill(0x000000, 0);
-    spacer.drawRect(0, 0, this.width + 50, this.height + 50);
+    spacer.drawRect(0, 0, this.width + 40, this.height + 40);
     spacer.endFill();
     this.addChild(spacer);
 
