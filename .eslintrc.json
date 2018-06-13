@@ -11,12 +11,14 @@
   },
   "rules": {
     "comma-dangle": 0,
+    "import/no-duplicates": 0,
     "import/no-extraneous-dependencies": [
       "error",
       {
         "devDependencies": true
       }
     ],
+    "import/no-mutable-exports": 0,
     "no-mixed-operators": 0,
     "no-underscore-dangle": 0,
     "object-curly-newline": 0
