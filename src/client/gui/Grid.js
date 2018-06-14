@@ -23,7 +23,7 @@ export default class Grid extends Container {
     gridBottom.tint = colors.GRID;
     gridBottom.rotation = radians(180);
     gridBottom.x = gridBottom.width;
-    gridBottom.y = this.height + 58;
+    gridBottom.y = this.height + gridBottom.height;
     this.addChild(gridBottom);
   }
 }
