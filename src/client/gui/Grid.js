@@ -1,6 +1,6 @@
 import { Container, extras, Sprite, utils } from 'pixi.js';
 import { colors, GRID_UNIT } from 'client/constants';
-import { radians } from 'client/utils';
+import { deg2rad } from 'client/utils';
 
 export default class Grid extends Container {
   constructor() {
@@ -21,7 +21,7 @@ export default class Grid extends Container {
 
     const gridBottom = new Sprite(utils.TextureCache.grid_outer);
     gridBottom.tint = colors.GRID;
-    gridBottom.rotation = radians(180);
+    gridBottom.rotation = deg2rad(180);
     gridBottom.x = gridBottom.width;
     gridBottom.y = this.height + gridBottom.height;
     this.addChild(gridBottom);

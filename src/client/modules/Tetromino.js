@@ -1,7 +1,7 @@
 import { Container } from 'pixi.js';
 import Block from 'client/modules/Block';
 import { BLOCK_SIZE, BLOCK_GAP, GRID_UNIT } from 'client/constants';
-import { degrees } from 'client/utils';
+import { deg2rad } from 'client/utils';
 
 export default class Tetromino extends Container {
   constructor({ type, size, pivotPoint, spawnVector, states }) {
@@ -47,7 +47,7 @@ export default class Tetromino extends Container {
     if (this._stateIndex > 3) {
       this.stateIndex = 0;
     }
-    this.rotation = degrees(this._stateIndex * 90);
+    this.rotation = deg2rad(this._stateIndex * 90);
   }
 
   // counter-clockwise
@@ -56,7 +56,7 @@ export default class Tetromino extends Container {
     if (this._stateIndex < 0) {
       this.stateIndex = 3;
     }
-    this.rotation = degrees(this._stateIndex * 90);
+    this.rotation = deg2rad(this._stateIndex * 90);
   }
 
   get type() {
