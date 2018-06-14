@@ -1,15 +1,15 @@
 // colors
 export const colors = {
-  BACKGROUND: 0x32234c,
-  GRID: 0xffbdff,
-  PRELOADER: 0xfe2880,
-  I: 0xfe2880,
-  J: 0xfe2880,
-  L: 0xfe2880,
-  O: 0xfe2880,
-  S: 0xfe2880,
-  T: 0xfe2880,
-  Z: 0xfe2880
+  BACKGROUND: 0x33244d,
+  GRID: 0x9477cb,
+  PRELOADER: 0xf62078,
+  I: 0x14f1e8,
+  J: 0x1257fd,
+  L: 0xf26120,
+  O: 0xfcde42,
+  S: 0x31d07e,
+  T: 0xf62078,
+  Z: 0xff0332
 };
 export const BLOCK_SIZE = 30;
 export const BLOCK_GAP = 1;
