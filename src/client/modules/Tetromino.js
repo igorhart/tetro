@@ -28,7 +28,6 @@ export default class Tetromino extends Container {
           const block = new Block({ type: this._type });
           block.x = BLOCK_SIZE / 2 + colIndex * BLOCK_SIZE + colIndex * BLOCK_GAP;
           block.y = BLOCK_SIZE / 2 + rowIndex * BLOCK_SIZE + rowIndex * BLOCK_GAP;
-          block.rotation = deg2rad(this.children.length * 90);
           this.addChild(block);
         }
       }
@@ -49,6 +48,7 @@ export default class Tetromino extends Container {
       this.stateIndex = 0;
     }
     this.rotation = deg2rad(this._stateIndex * 90);
+    this.children.forEach(block => block.rotateCCW());
   }
 
   // counter-clockwise
@@ -58,6 +58,7 @@ export default class Tetromino extends Container {
       this.stateIndex = 3;
     }
     this.rotation = deg2rad(this._stateIndex * 90);
+    this.children.forEach(block => block.rotateCW());
   }
 
   get type() {
