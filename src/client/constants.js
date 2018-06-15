@@ -11,7 +11,7 @@ export const colors = {
   T: 0xf62078,
   Z: 0xff0332
 };
-export const BLOCK_SIZE = 30;
+export const BLOCK_SIZE = 29;
 export const BLOCK_GAP = 1;
 export const GLOW_PADDING = 10;
 export const GRID_COLS = 10;
