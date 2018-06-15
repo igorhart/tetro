@@ -28,6 +28,7 @@ export default class Tetromino extends Container {
           const block = new Block({ type: this._type });
           block.x = BLOCK_SIZE / 2 + colIndex * BLOCK_SIZE + colIndex * BLOCK_GAP;
           block.y = BLOCK_SIZE / 2 + rowIndex * BLOCK_SIZE + rowIndex * BLOCK_GAP;
+          block.rotation = deg2rad(this.children.length * 90);
           this.addChild(block);
         }
       }
