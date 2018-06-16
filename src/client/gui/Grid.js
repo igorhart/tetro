@@ -14,6 +14,7 @@ class Grid extends Container {
     super();
 
     this.createGrid();
+    this.addBlocksContainer();
   }
 
   createGrid() {
@@ -49,6 +50,18 @@ class Grid extends Container {
     lines.x = GLOW_PADDING + BLOCK_GAP * 2;
     lines.y = GLOW_PADDING + BLOCK_GAP * 2;
     this.addChild(lines);
+  }
+
+  addBlocksContainer() {
+    const blocksContainer = new Container();
+    this._blocksContainer = blocksContainer;
+    blocksContainer.x = GLOW_PADDING + BLOCK_GAP * 2;
+    blocksContainer.y = GLOW_PADDING + BLOCK_GAP * 2;
+    this.addChild(blocksContainer);
+  }
+
+  getBlocksContainer() {
+    return this._blocksContainer;
   }
 }
 
