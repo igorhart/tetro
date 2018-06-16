@@ -1,20 +1,47 @@
 import { Container } from 'pixi.js';
+import InputManager from 'client/managers/InputManager';
 import Grid from 'client/gui/Grid';
 import Bag from 'client/modules/Bag';
 import Scene from 'client/modules/Scene';
 import Tetromino from 'client/modules/Tetromino';
 import { types } from 'client/modules/Tetromino';
+import actions from 'client/constants/actions';
 
 class SoloGameScene extends Scene {
   constructor({ id }) {
     super({ id });
 
+    this.onRotateCWActionDown = this.onRotateCWActionDown.bind(this);
+    this.onRotateCCWActionDown = this.onRotateCCWActionDown.bind(this);
+    this.onShiftLeftActionDown = this.onShiftLeftActionDown.bind(this);
+    this.onShiftRightActionDown = this.onShiftRightActionDown.bind(this);
+    this.onSoftDropActionDown = this.onSoftDropActionDown.bind(this);
+    this.onHardDropActionDown = this.onHardDropActionDown.bind(this);
+    this.onPauseActionDown = this.onPauseActionDown.bind(this);
+    this.onRetryActionDown = this.onRetryActionDown.bind(this);
+
+    this._inputManager = InputManager.getInstance();
     this._gui = null;
     this._blocksContainer = null;
     this.addGUI();
-    this.reset();
+    this.addActionListeners();
 
+    this.reset();
     this.start();
+  }
+
+  reset() {
+    this._bag = new Bag();
+
+    // TODO: destroy() all of them
+    this._tetromino = null;
+    this._ghost = null;
+    this._nextTetromino = null;
+
+    this._score = 0;
+    this._highScore = 0; // TODO: get it from LocalStorage or set to zero
+    this._level = 0;
+    this._paused = false;
   }
 
   start() {
@@ -41,20 +68,6 @@ class SoloGameScene extends Scene {
     this.start();
   }
 
-  reset() {
-    this._bag = new Bag();
-
-    // TODO: destroy() all of them
-    this._tetromino = null;
-    this._tetrominoGhost = null;
-    this._nextTetromino = null;
-
-    this._score = 0;
-    this.highScore = 0; // TODO: get it from LocalStorage or set to zero
-    this._level = 0;
-    this._paused = false;
-  }
-
   // gameOver() {
   //
   // }
@@ -65,20 +78,79 @@ class SoloGameScene extends Scene {
     } else {
       this._tetromino = this.getRandomTetromino();
     }
-    this._tetrominoGhost = this._tetromino.clone();
     this._nextTetromino = this.getRandomTetromino();
 
     this._blocksContainer.addChild(this._tetromino);
-    this._blocksContainer.addChild(this._nextTetromino);
-    this._nextContainer.addChild(this._nextTetromino);
-
-    this.moveTetromino(this._tetromino.spawnVector); // move to initial spawn position
+    this._tetrominoDataPosition = this._tetromino.type === types.I.type ? [0, -1] : [0, 0];
+    // move to [0, 0]
+    this._tetromino.position.set(this._tetromino.pivot.x, this._tetromino.pivot.y);
+    // move to initial spawn position
+    this.shiftTetromino(this._tetromino.spawnVector);
   }
 
   getRandomTetromino() {
-    const tetromino = new Tetromino(types[this._bag.pick()]);
-    tetromino.position.set(tetromino.pivot.x, tetromino.pivot.y); // move to [0, 0]
-    return tetromino;
+    return new Tetromino(types[this._bag.pick()]);
+  }
+
+  shiftTetromino([x, y]) {
+    const [dataX, dataY] = this._tetrominoDataPosition;
+    this._tetrominoDataPosition = [dataX + x, dataY + y];
+    this._tetromino.translate([x, y]);
+  }
+
+  rotateTetrominoCW() {
+    this._tetromino.rotateCW();
+  }
+
+  rotateTetrominoCCW() {
+    this._tetromino.rotateCCW();
+  }
+
+  dropTetromino() {
+    this.shiftTetromino([0, 1]);
+  }
+
+  addActionListeners() {
+    this._inputManager.onActionDown(actions.ROTATE_CW, this.onRotateCWActionDown);
+    this._inputManager.onActionDown(actions.ROTATE_CCW, this.onRotateCCWActionDown);
+    this._inputManager.onActionDown(actions.SHIFT_LEFT, this.onShiftLeftActionDown);
+    this._inputManager.onActionDown(actions.SHIFT_RIGHT, this.onShiftRightActionDown);
+    this._inputManager.onActionDown(actions.SOFT_DROP, this.onSoftDropActionDown);
+    this._inputManager.onActionDown(actions.HARD_DROP, this.onHardDropActionDown);
+    this._inputManager.onActionDown(actions.PAUSE, this.onPauseActionDown);
+    this._inputManager.onActionDown(actions.RETRY, this.onRetryActionDown);
+  }
+
+  onRotateCWActionDown() {
+    this.rotateTetrominoCW();
+  }
+
+  onRotateCCWActionDown() {
+    this.rotateTetrominoCCW();
+  }
+
+  onShiftLeftActionDown() {
+    this.shiftTetromino([-1, 0]);
+  }
+
+  onShiftRightActionDown() {
+    this.shiftTetromino([1, 0]);
+  }
+
+  onSoftDropActionDown() {
+    this.dropTetromino();
+  }
+
+  onHardDropActionDown() {
+    console.log(this);
+  }
+
+  onPauseActionDown() {
+    console.log(this);
+  }
+
+  onRetryActionDown() {
+    console.log(this);
   }
 
   addGUI() {
