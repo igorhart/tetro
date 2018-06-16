@@ -105,7 +105,7 @@ class InputManager {
   runListeners(action, type) {
     this._listeners.forEach(listener => {
       if (
-        (listener.action === listener.type && listener.type === type) ||
+        (listener.action === action && listener.type === type) ||
         listener.action === inputActions.ANY
       ) {
         listener.cb();
