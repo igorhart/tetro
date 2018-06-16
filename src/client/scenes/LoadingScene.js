@@ -2,16 +2,17 @@ import { loader } from 'pixi.js';
 import { RoughEase, TweenMax } from 'gsap/all';
 import Preloader from 'client/gui/Preloader';
 import Scene from 'client/modules/Scene';
+import scenes from 'client/constants/scenes';
 import assets from 'client/assets';
 
-export default class LoadingScene extends Scene {
-  constructor({ id, sceneManager }) {
-    super({ id, sceneManager });
+class LoadingScene extends Scene {
+  constructor({ id }) {
+    super({ id });
 
     this.init();
 
     this.onTick = this.onTick.bind(this);
-    sceneManager.app.ticker.add(this.onTick);
+    this.sceneManager.app.ticker.add(this.onTick);
   }
 
   init() {
@@ -37,7 +38,7 @@ export default class LoadingScene extends Scene {
     //   progress: 100,
     //   ease: SteppedEase.config(10),
     //   onComplete: () => {
-    //     this._sceneManager.loadScene('controls');
+    //     this.sceneManager.loadScene(scenes.CONTROLS);
     //   }
     // });
 
@@ -50,13 +51,13 @@ export default class LoadingScene extends Scene {
         })
         .on('complete', () => {
           // TODO: prepare audio files with sound.js before continuing
-          this.sceneManager.loadScene('controls');
+          this.sceneManager.loadScene(scenes.CONTROLS);
         })
         .load();
     } else {
       this._preloader.progress = 100;
       setTimeout(() => {
-        this.sceneManager.loadScene('controls');
+        this.sceneManager.loadScene(scenes.CONTROLS);
       });
     }
   }
@@ -81,3 +82,5 @@ export default class LoadingScene extends Scene {
     });
   }
 }
+
+export default LoadingScene;

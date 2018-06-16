@@ -1,8 +1,9 @@
 import { Sprite, utils } from 'pixi.js';
-import { colors, GRID_UNIT } from 'client/constants';
+import colors from 'client/constants/colors';
+import { GRID_UNIT } from 'client/constants/dimensions';
 import { deg2rad } from 'client/utils';
 
-export default class Block extends Sprite {
+class Block extends Sprite {
   constructor({ type }) {
     super(utils.TextureCache.block);
 
@@ -25,3 +26,5 @@ export default class Block extends Sprite {
     this.rotation -= deg2rad(90);
   }
 }
+
+export default Block;

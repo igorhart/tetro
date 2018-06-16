@@ -1,8 +1,9 @@
 import { Container, Graphics, settings } from 'pixi.js';
 import { GlowFilter } from 'pixi-filters';
-import { colors, GLOW_PADDING } from 'client/constants';
+import colors from 'client/constants/colors';
+import { GLOW_PADDING } from 'client/constants/dimensions';
 
-export default class Preloader extends Container {
+class Preloader extends Container {
   constructor({ progress } = { progress: 0 }) {
     super();
 
@@ -79,3 +80,5 @@ export default class Preloader extends Container {
     return this._progressBar;
   }
 }
+
+export default Preloader;

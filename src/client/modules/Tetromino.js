@@ -1,9 +1,9 @@
 import { Container } from 'pixi.js';
 import Block from 'client/modules/Block';
-import { BLOCK_SIZE, BLOCK_GAP, GRID_UNIT } from 'client/constants';
+import { BLOCK_SIZE, BLOCK_GAP, GRID_UNIT } from 'client/constants/dimensions';
 import { deg2rad } from 'client/utils';
 
-export default class Tetromino extends Container {
+class Tetromino extends Container {
   constructor({ type, size, pivotPoint, spawnVector, states }) {
     super();
 
@@ -77,6 +77,8 @@ export default class Tetromino extends Container {
     return this._states[this._stateIndex];
   }
 }
+
+export default Tetromino;
 
 // prettier-ignore
 export const types = {

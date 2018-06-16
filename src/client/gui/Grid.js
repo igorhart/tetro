@@ -1,8 +1,15 @@
 import { Container, extras, Graphics, Sprite, utils } from 'pixi.js';
-import { colors, BLOCK_GAP, GLOW_PADDING, GRID_COLS, GRID_ROWS, GRID_UNIT } from 'client/constants';
+import colors from 'client/constants/colors';
+import {
+  BLOCK_GAP,
+  GLOW_PADDING,
+  GRID_COLS,
+  GRID_ROWS,
+  GRID_UNIT
+} from 'client/constants/dimensions';
 import { deg2rad } from 'client/utils';
 
-export default class Grid extends Container {
+class Grid extends Container {
   constructor() {
     super();
 
@@ -44,3 +51,5 @@ export default class Grid extends Container {
     this.addChild(lines);
   }
 }
+
+export default Grid;

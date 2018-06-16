@@ -10,6 +10,7 @@
     }
   },
   "rules": {
+    "arrow-parens": ["error", "as-needed"],
     "comma-dangle": 0,
     "import/no-duplicates": 0,
     "import/no-extraneous-dependencies": [

@@ -1,5 +1,5 @@
 import { Application, settings } from 'pixi.js';
-import { colors } from './constants';
+import colors from 'client/constants/colors';
 
 settings.RESOLUTION = window.devicePixelRatio;
 

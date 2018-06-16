@@ -1,8 +1,9 @@
 import Scene from 'client/modules/Scene';
+import scenes from 'client/constants/scenes';
 
-export default class ControlsScene extends Scene {
-  constructor({ id, sceneManager }) {
-    super({ id, sceneManager });
+class ControlsScene extends Scene {
+  constructor({ id }) {
+    super({ id });
 
     this.init();
 
@@ -19,7 +20,7 @@ export default class ControlsScene extends Scene {
     // on any key press
     // TODO: remove setTimeout() when ready
     setTimeout(() => {
-      this.sceneManager.loadScene('soloGame');
+      this.sceneManager.loadScene(scenes.SOLO_GAME);
       // SceneManager.instance.loadScene('soloGame');
     });
     // });
@@ -33,3 +34,5 @@ export default class ControlsScene extends Scene {
   //   super.onTick();
   // }
 }
+
+export default ControlsScene;

@@ -1,7 +1,7 @@
 import { types } from 'client/modules/Tetromino';
 import { randomInt } from 'client/utils';
 
-export default class Bag {
+class Bag {
   constructor() {
     this._types = [];
   }
@@ -17,3 +17,5 @@ export default class Bag {
     this._types = Object.keys(types);
   }
 }
+
+export default Bag;
