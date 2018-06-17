@@ -110,7 +110,7 @@ class SoloGameScene extends Scene {
   }
 
   showPauseOverlay() {
-    this._pauseOverlay.show();
+    this._pauseOverlay.show(this);
   }
 
   hidePauseOverlay() {
@@ -273,11 +273,13 @@ class SoloGameScene extends Scene {
       Math.floor(this.height / 2 - this._gui.height / 2)
     );
 
-    const pauseOverlay = new PauseOverlay();
+    const pauseOverlay = new PauseOverlay(this);
     this._pauseOverlay = pauseOverlay;
-    pauseOverlay.width = this.width;
-    pauseOverlay.height = this.height;
-    pauseOverlay.position.set(Math.floor(this.width / 2), Math.floor(this.height / 2));
+
+    pauseOverlay.position.set(
+      Math.floor(this.width / 2 - pauseOverlay.width / 2),
+      Math.floor(this.height / 2 - pauseOverlay.height / 2)
+    );
     this.addChild(pauseOverlay);
     pauseOverlay.hide();
   }
