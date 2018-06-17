@@ -1,5 +1,5 @@
 import { loader } from 'pixi.js';
-import { RoughEase, TweenMax } from 'gsap/all';
+// import { RoughEase, TweenMax } from 'gsap/all';
 import Preloader from 'client/gui/Preloader';
 import Scene from 'client/modules/Scene';
 import scenes from 'client/constants/scenes';
@@ -71,15 +71,19 @@ class LoadingScene extends Scene {
 
   onExit(cb) {
     // blink like broken neon
-    TweenMax.to(this._preloader.progressBar, 0.5, {
-      alpha: 0,
-      ease: RoughEase.ease.config({ points: 20, strength: 10, randomize: true, clamp: true }),
-      delay: 0.5,
-      onComplete: () => {
-        this.app.ticker.remove(this.onTick);
-        super.onExit(cb);
-      }
-    });
+
+    this.app.ticker.remove(this.onTick);
+    super.onExit(cb);
+
+    // TweenMax.to(this._preloader.progressBar, 0.5, {
+    //   alpha: 0,
+    //   ease: RoughEase.ease.config({ points: 20, strength: 10, randomize: true, clamp: true }),
+    //   delay: 0.5,
+    //   onComplete: () => {
+    //     this.app.ticker.remove(this.onTick);
+    //     super.onExit(cb);
+    //   }
+    // });
   }
 }
 

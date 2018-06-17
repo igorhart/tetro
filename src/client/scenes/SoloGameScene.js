@@ -2,6 +2,7 @@ import { Container, filters } from 'pixi.js';
 import InputManager from 'client/managers/InputManager';
 import Grid from 'client/gui/Grid';
 import Bag from 'client/modules/Bag';
+import GridState from 'client/modules/GridState';
 import CountdownOverlay from 'client/gui/CountdownOverlay';
 import PauseOverlay from 'client/gui/PauseOverlay';
 import Scene from 'client/modules/Scene';
@@ -46,7 +47,7 @@ class SoloGameScene extends Scene {
   reset() {
     this._paused = true;
     this._bag = new Bag();
-
+    this._gridState = new GridState();
     this._blocksContainer.removeChildren();
 
     this._tetromino = null;
@@ -239,7 +240,6 @@ class SoloGameScene extends Scene {
     if (this._paused) {
       return;
     }
-    // +2 points for every pixel traveled
     console.log(this);
   }
 
