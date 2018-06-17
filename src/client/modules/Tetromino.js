@@ -45,7 +45,7 @@ class Tetromino extends Container {
   rotateCW() {
     this._stateIndex += 1;
     if (this._stateIndex > 3) {
-      this.stateIndex = 0;
+      this._stateIndex = 0;
     }
     this.rotation = deg2rad(this._stateIndex * 90);
     this.children.forEach(block => block.rotateCCW());
@@ -55,7 +55,7 @@ class Tetromino extends Container {
   rotateCCW() {
     this._stateIndex -= 1;
     if (this._stateIndex < 0) {
-      this.stateIndex = 3;
+      this._stateIndex = 3;
     }
     this.rotation = deg2rad(this._stateIndex * 90);
     this.children.forEach(block => block.rotateCW());
