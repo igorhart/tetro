@@ -1,5 +1,6 @@
-import { Container, Sprite, Text, Texture } from 'pixi.js';
+import { Container, extras, Sprite, Texture } from 'pixi.js';
 import { TweenMax } from 'gsap/all';
+import colors from 'client/constants/colors';
 
 class PauseOverlay extends Container {
   constructor(parent) {
@@ -20,19 +21,23 @@ class PauseOverlay extends Container {
   }
 
   addText() {
-    const text = new Text('Pause', {
+    const text = new extras.BitmapText('Pause', {
       align: 'center',
-      cacheAsBitmap: true,
-      fontFamily: 'Arial',
-      fontSize: 24,
-      fontWeight: 'bold',
-      fill: 0xffffff
+      font: {
+        name: 'SF Alien Encounters',
+        size: 36 * window.devicePixelRatio
+      }
     });
+    text.tint = colors.PINK;
     text.anchor.set(0.5);
     text.position.set(Math.floor(this.width / 2), Math.floor(this.height / 2));
     this.addChild(text);
 
-    this._textAnimation = TweenMax.to(text, 0.6, { alpha: 0, yoyo: true, repeat: 9999 });
+    this._textAnimation = TweenMax.to(text, 0.5, {
+      alpha: 0,
+      yoyo: true,
+      repeat: -1
+    });
   }
 
   resizeBackground(parent) {

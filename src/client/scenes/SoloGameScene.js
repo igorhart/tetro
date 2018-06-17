@@ -2,7 +2,8 @@ import { Container, filters } from 'pixi.js';
 import InputManager from 'client/managers/InputManager';
 import Grid from 'client/gui/Grid';
 import Bag from 'client/modules/Bag';
-import PauseOverlay from 'client/modules/PauseOverlay';
+import CountdownOverlay from 'client/gui/CountdownOverlay';
+import PauseOverlay from 'client/gui/PauseOverlay';
 import Scene from 'client/modules/Scene';
 import Tetromino from 'client/modules/Tetromino';
 import { types } from 'client/modules/Tetromino';
@@ -62,16 +63,20 @@ class SoloGameScene extends Scene {
     this._highScore = 0; // TODO: get it from LocalStorage or set to zero
     this._level = STARTING_LEVEL;
     this.resetDropCounter();
+    this.blurGUI();
   }
 
   start() {
-    // TODO: count down 3, 2, 1...
-    this.showBlocks();
-    this.spawnTetromino();
-    this._paused = false;
+    this.startCountdown(() => {
+      this.unblurGUI();
+      this.showBlocks();
+      this.spawnTetromino();
+      this._paused = false;
+    });
   }
 
   pause() {
+    this.stopCountdown();
     this._paused = true;
     this.hideBlocks();
     this.blurGUI();
@@ -80,10 +85,11 @@ class SoloGameScene extends Scene {
 
   resume() {
     this.hidePauseOverlay();
-    this.unblurGUI();
-    // TODO: count down 3, 2, 1...
-    this.showBlocks();
-    this._paused = false;
+    this.startCountdown(() => {
+      this.unblurGUI();
+      this.showBlocks();
+      this._paused = false;
+    });
   }
 
   retry() {
@@ -117,6 +123,22 @@ class SoloGameScene extends Scene {
     this._pauseOverlay.hide();
   }
 
+  startCountdown(cb) {
+    this._counting = true;
+    this._countdownOverlay.visible = true;
+    this._countdownOverlay.count(() => {
+      this._countdownOverlay.visible = false;
+      this._counting = false;
+      cb();
+    });
+  }
+
+  stopCountdown() {
+    this._counting = false;
+    this._countdownOverlay.visible = false;
+    this._countdownOverlay.stop();
+  }
+
   // gameOver() {
   //
   // }
@@ -127,7 +149,6 @@ class SoloGameScene extends Scene {
       this._tetromino = this._nextTetromino;
     } else {
       this._tetromino = this.getRandomTetromino();
-      console.log(this._tetromino);
     }
     this._nextTetromino = this.getRandomTetromino();
     // this._ghost.alpha = GHOST_ALPHA;
@@ -223,7 +244,9 @@ class SoloGameScene extends Scene {
   }
 
   onPauseActionDown() {
-    if (this._paused) {
+    if (this._counting) {
+      this.pause();
+    } else if (this._paused) {
       this.resume();
     } else {
       this.pause();
@@ -282,6 +305,12 @@ class SoloGameScene extends Scene {
     );
     this.addChild(pauseOverlay);
     pauseOverlay.hide();
+
+    const countdownOverlay = new CountdownOverlay();
+    this._countdownOverlay = countdownOverlay;
+    this.addChild(countdownOverlay);
+    countdownOverlay.position.set(Math.floor(this.width / 2), Math.floor(this.height / 2));
+    countdownOverlay.visible = false;
   }
 }
 

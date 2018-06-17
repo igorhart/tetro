@@ -19,6 +19,7 @@ app.renderer.resize(window.innerWidth, window.innerHeight);
 
 window.addEventListener('resize', () => {
   app.renderer.resize(window.innerWidth, window.innerHeight);
+  // TODO: emit 'resize' event
 });
 
 export default app;

@@ -2,6 +2,8 @@ const colors = {
   BACKGROUND: 0x33244d,
   GRID: 0x9477cb,
   PRELOADER: 0xf62078,
+  PINK: 0xf62078,
+  CYAN: 0x14f1e8,
   I: 0x14f1e8,
   J: 0x1c97f5,
   L: 0xf26120,
