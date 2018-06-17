@@ -1,33 +1,62 @@
-import { GRID_COLS, GRID_ROWS } from 'client/constants/dimensions';
-import { zeroFill2d } from 'client/utils';
+import { fill2d, isDefined } from 'client/utils';
 
 class GridState {
-  constructor() {
+  constructor(w, h) {
+    this._w = w;
+    this._h = h;
+
     this.clear();
   }
 
   clear() {
-    this._state = zeroFill2d(GRID_COLS, GRID_ROWS);
-    this.mergeRect({
-      x: 3,
-      y: 0,
-      rect: [[0, 0, 0, 0], [1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0]]
-    });
-    console.log(this._state);
-    // console.log(this.getRect({ x: 1, y: 0, size: 2 }));
+    this._state = fill2d(this._w, this._h, 0);
   }
 
   getRect({ x, y, size }) {
-    const rect = [];
-    for (let i = 0; i < size; i += 1) {
-      rect.push(this._state[y + i].slice(x, x + size));
+    let h = size;
+    let yPos = y;
+    let fullRowsToAdd = 0;
+    let rect = [];
+
+    if (y < 0) {
+      rect = fill2d(size, Math.abs(yPos), 1);
+      h = size - Math.abs(yPos);
+      yPos = 0;
     }
+
+    if (y + size > this._h) {
+      h = size - (y + size - this._h);
+      if (h < 0) {
+        h = 0;
+      }
+      fullRowsToAdd = size - h;
+      if (fullRowsToAdd > size) {
+        fullRowsToAdd = size;
+      }
+    }
+
+    for (let i = 0; i < h; i += 1) {
+      const row = [];
+      for (let j = 0; j < size; j += 1) {
+        const value = this._state[yPos + i][x + j];
+        if (!isDefined(value)) {
+          row.push(1);
+        } else {
+          row.push(value);
+        }
+      }
+      rect.push(row);
+    }
+
+    if (fullRowsToAdd > 0) {
+      rect = rect.concat(fill2d(size, fullRowsToAdd, 1));
+    }
+
     return rect;
   }
 
   isCollision({ x, y, size, other }) {
     const rect = this.getRect({ x, y, size });
-    // TODO: compare two rects
     for (let i = 0; i < size; i += 1) {
       for (let j = 0; j < size; j += 1) {
         if (rect[i][j] === 1 && other[i][j] === 1) {

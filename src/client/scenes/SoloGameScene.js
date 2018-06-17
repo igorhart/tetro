@@ -9,6 +9,7 @@ import Scene from 'client/modules/Scene';
 import Tetromino from 'client/modules/Tetromino';
 import { types } from 'client/modules/Tetromino';
 import actions from 'client/constants/actions';
+import { GRID_COLS, GRID_ROWS } from 'client/constants/dimensions';
 import {
   DROP_FRAMES_PER_LEVEL,
   FPS,
@@ -34,6 +35,7 @@ class SoloGameScene extends Scene {
     this.onTick = this.onTick.bind(this);
 
     this._inputManager = InputManager.getInstance();
+    this._gridState = new GridState(GRID_COLS, GRID_ROWS);
     this._gui = null;
     this._blocksContainer = null;
     this.addGUI();
@@ -47,7 +49,7 @@ class SoloGameScene extends Scene {
   reset() {
     this._paused = true;
     this._bag = new Bag();
-    this._gridState = new GridState();
+    this._gridState.clear();
     this._blocksContainer.removeChildren();
 
     this._tetromino = null;
