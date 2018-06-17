@@ -157,7 +157,7 @@ class SoloGameScene extends Scene {
     // this._ghost.alpha = GHOST_ALPHA;
 
     this._blocksContainer.addChild(this._tetromino);
-    this._tetrominoDataPosition = this._tetromino.type === types.I.type ? [0, -1] : [0, 0];
+    this._tetromino._gridPosition = this._tetromino.type === types.I.type ? [0, -1] : [0, 0];
     // move to [0, 0]
     this._tetromino.position.set(this._tetromino.pivot.x, this._tetromino.pivot.y);
     // move to initial spawn position
@@ -169,9 +169,22 @@ class SoloGameScene extends Scene {
   }
 
   shiftTetromino([x, y]) {
-    const [dataX, dataY] = this._tetrominoDataPosition;
-    this._tetrominoDataPosition = [dataX + x, dataY + y];
-    this._tetromino.translate([x, y]);
+    const [gridX, gridY] = this._tetromino._gridPosition;
+    const newPos = [gridX + x, gridY + y];
+
+    if (
+      !this._gridState.isCollision({
+        x: newPos[0],
+        y: newPos[1],
+        size: this._tetromino.size,
+        other: this._tetromino.state
+      })
+    ) {
+      this._tetromino._gridPosition = newPos;
+      this._tetromino.translate([x, y]);
+      return true;
+    }
+    return false;
   }
 
   rotateTetrominoCW() {
@@ -184,7 +197,13 @@ class SoloGameScene extends Scene {
 
   dropTetromino() {
     this.resetDropCounter();
-    this.shiftTetromino([0, 1]);
+    if (!this.shiftTetromino([0, 1])) {
+      this.lockTetromino();
+    }
+  }
+
+  lockTetromino() {
+    console.log(this);
   }
 
   resetDropCounter() {
