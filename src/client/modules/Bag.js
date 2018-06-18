@@ -1,4 +1,4 @@
-import { types } from 'client/modules/Tetromino';
+import { types } from 'client/tetrominoData';
 import { randomInt } from 'client/utils';
 
 class Bag {

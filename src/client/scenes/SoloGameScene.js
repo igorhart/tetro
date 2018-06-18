@@ -7,7 +7,7 @@ import CountdownOverlay from 'client/gui/CountdownOverlay';
 import PauseOverlay from 'client/gui/PauseOverlay';
 import Scene from 'client/modules/Scene';
 import Tetromino from 'client/modules/Tetromino';
-import { types } from 'client/modules/Tetromino';
+import { types } from 'client/tetrominoData';
 import actions from 'client/constants/actions';
 import { GRID_COLS, GRID_ROWS } from 'client/constants/dimensions';
 import {
@@ -148,7 +148,6 @@ class SoloGameScene extends Scene {
 
   spawnTetromino() {
     if (this._nextTetromino) {
-      console.log('use next');
       this._tetromino = this._nextTetromino;
     } else {
       this._tetromino = this.getRandomTetromino();
@@ -187,12 +186,33 @@ class SoloGameScene extends Scene {
     return false;
   }
 
-  rotateTetrominoCW() {
-    this._tetromino.rotateCW();
-  }
+  rotateTetromino(direction) {
+    const wallKicks = this._tetromino[`rotate${direction}`]();
+    let canRotate = false;
+    if (wallKicks.length) {
+      for (let i = 0; i < wallKicks.length; i += 1) {
+        const [x, y] = wallKicks[i];
+        const vector = [x, -y]; // y has to be inverted because SRS has y axis increasing up
+        if (this.shiftTetromino(vector)) {
+          canRotate = true;
+          break;
+        }
+      }
+    } else {
+      canRotate = true;
+    }
 
-  rotateTetrominoCCW() {
-    this._tetromino.rotateCCW();
+    if (canRotate) {
+      // TODO: rotate ghost
+      // TODO: translate ghost
+    } else {
+      // rotation failed, rotate back
+      if (direction === 'CW') {
+        this._tetromino.rotateCCW();
+      } else {
+        this._tetromino.rotateCW();
+      }
+    }
   }
 
   dropTetromino() {
@@ -203,6 +223,7 @@ class SoloGameScene extends Scene {
   }
 
   lockTetromino() {
+    console.log('LOCK!');
     console.log(this);
   }
 
@@ -225,14 +246,14 @@ class SoloGameScene extends Scene {
     if (this._paused) {
       return;
     }
-    this.rotateTetrominoCW();
+    this.rotateTetromino('CW');
   }
 
   onRotateCCWActionDown() {
     if (this._paused) {
       return;
     }
-    this.rotateTetrominoCCW();
+    this.rotateTetromino('CCW');
   }
 
   onShiftLeftActionDown() {
