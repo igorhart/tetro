@@ -21,6 +21,7 @@ import {
   STARTING_LEVEL,
   STARTING_SCORE
 } from 'client/constants/game';
+import { numericSort } from 'client/utils';
 
 class SoloGameScene extends Scene {
   constructor({ id }) {
@@ -176,6 +177,7 @@ class SoloGameScene extends Scene {
     this._tetromino.position.set(this._tetromino.pivot.x, this._tetromino.pivot.y);
     // TODO: move ghost
     // move to initial spawn position
+
     if (!this.shiftTetromino(this._tetromino.spawnVector)) {
       this._tetromino.visible = false;
       this.gameOver();
@@ -246,7 +248,9 @@ class SoloGameScene extends Scene {
           this.spawnTetromino();
         });
       });
+      return false;
     }
+    return true;
   }
 
   lockTetromino(cb) {
@@ -264,7 +268,7 @@ class SoloGameScene extends Scene {
           block.x = BLOCK_SIZE / 2 + (gridX + colIndex) * GRID_UNIT;
           block.y = BLOCK_SIZE / 2 + (gridY + rowIndex) * GRID_UNIT;
           block.visible = false;
-          block._gridPosition = [colIndex, rowIndex];
+          block._gridPosition = [gridX + colIndex, gridY + rowIndex];
           this._blocksContainer.addChild(block);
           blocks.push(block);
         }
@@ -290,19 +294,49 @@ class SoloGameScene extends Scene {
 
   clearLines(cb) {
     this._clearing = true;
-    // TODO: check if there are lines to clear
-    // TODO: clear lines in data
-    // TODO: clear blocks
-    // TODO: play clearing sound
-    // TODO: mark individual segments above cleared lines
-    // TODO: collect segments' blocks into containers
-    // TODO: drop segments in data
-    // TODO: drop segments on the screen
-    // TODO: repeat! recursive!
-    // TODO: finish clearing by calling cb()
-    console.log('LINES CLEARED', this);
-    this._clearing = false;
-    cb();
+
+    const fullRowIndexes = this._gridState.getFullRowIndexes();
+    if (fullRowIndexes.length) {
+      this._gridState.clearRowsAt(fullRowIndexes);
+      const blocksToClear = [];
+      this._blocksContainer.children.forEach(child => {
+        if (child instanceof Block && fullRowIndexes.indexOf(child._gridPosition[1]) !== -1) {
+          blocksToClear.push(child);
+        }
+      });
+
+      // TODO: play clearing sound
+      // TODO: TweenMax blocks before remove
+
+      blocksToClear.forEach(block => {
+        this._blocksContainer.removeChild(block);
+      });
+
+      this._gridState.removeRowsAt(fullRowIndexes);
+
+      this._blocksContainer.children.forEach(child => {
+        if (child instanceof Block) {
+          const [x, y] = child._gridPosition;
+          const rowsToShiftDown = numericSort([y, ...fullRowIndexes])
+            .reverse()
+            .indexOf(y);
+          child._gridPosition = [x, y + rowsToShiftDown];
+          child.y += GRID_UNIT * rowsToShiftDown;
+        }
+      });
+      // TODO: mark individual segments above cleared lines
+      // TODO: collect segments' blocks into containers
+      // TODO: drop segments in data
+      // TODO: drop segments on the screen
+      // TODO: recursive repeat!
+      // TODO: finish clearing by calling cb()
+      this._clearing = false;
+      // TODO: increase linesCleared
+      cb();
+    } else {
+      this._clearing = false;
+      cb();
+    }
   }
 
   resetDropCounter() {

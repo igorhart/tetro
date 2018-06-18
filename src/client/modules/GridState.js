@@ -1,4 +1,4 @@
-import { fill2d, isDefined } from 'client/utils';
+import { fill2d, isDefined, numericSort } from 'client/utils';
 
 class GridState {
   constructor(w, h) {
@@ -10,6 +10,20 @@ class GridState {
 
   clear() {
     this._state = fill2d(this._w, this._h, 0);
+  }
+
+  clearRowsAt(indexes) {
+    indexes.forEach(i => {
+      this._state[i] = Array(this._w).fill(0);
+    });
+  }
+
+  removeRowsAt(indexes) {
+    const sortedIndexes = numericSort(indexes);
+    sortedIndexes.forEach(i => {
+      this._state.splice(i, 1);
+      this._state.unshift(Array(this._w).fill(0));
+    });
   }
 
   getRect({ x, y, size }) {
@@ -75,6 +89,16 @@ class GridState {
         }
       }
     }
+  }
+
+  getFullRowIndexes() {
+    const indexes = [];
+    for (let i = 0; i < this._h; i += 1) {
+      if (this._state[i].every(value => value === 1)) {
+        indexes.push(i);
+      }
+    }
+    return indexes;
   }
 
   get state() {
