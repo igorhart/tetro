@@ -2,6 +2,7 @@ import { Container, filters } from 'pixi.js';
 import InputManager from 'client/managers/InputManager';
 import Grid from 'client/gui/Grid';
 import Bag from 'client/modules/Bag';
+import Block from 'client/modules/Block';
 import GridState from 'client/modules/GridState';
 import CountdownOverlay from 'client/gui/CountdownOverlay';
 import PauseOverlay from 'client/gui/PauseOverlay';
@@ -9,7 +10,7 @@ import Scene from 'client/modules/Scene';
 import Tetromino from 'client/modules/Tetromino';
 import { types } from 'client/tetrominoData';
 import actions from 'client/constants/actions';
-import { GRID_COLS, GRID_ROWS } from 'client/constants/dimensions';
+import { BLOCK_SIZE, GRID_COLS, GRID_ROWS, GRID_UNIT } from 'client/constants/dimensions';
 import {
   DROP_FRAMES_PER_LEVEL,
   FPS,
@@ -48,6 +49,7 @@ class SoloGameScene extends Scene {
 
   reset() {
     this._paused = true;
+    this._locking = false;
     this._bag = new Bag();
     this._gridState.clear();
     this._blocksContainer.removeChildren();
@@ -223,8 +225,37 @@ class SoloGameScene extends Scene {
   }
 
   lockTetromino() {
-    console.log('LOCK!');
-    console.log(this);
+    this._locking = true;
+    const [gridX, gridY] = this._tetromino._gridPosition;
+    const { size, state, type } = this._tetromino;
+    this._gridState.mergeRect({ x: gridX, y: gridY, rect: state });
+
+    const blocks = [];
+    for (let rowIndex = 0; rowIndex < size; rowIndex += 1) {
+      for (let colIndex = 0; colIndex < size; colIndex += 1) {
+        const value = state[rowIndex][colIndex];
+        if (value === 1) {
+          const block = new Block({ type });
+          block.x = BLOCK_SIZE / 2 + (gridX + colIndex) * GRID_UNIT;
+          block.y = BLOCK_SIZE / 2 + (gridY + rowIndex) * GRID_UNIT;
+          block.visible = false;
+          block._gridPosition = [colIndex, rowIndex];
+          this._blocksContainer.addChild(block);
+          blocks.push(block);
+        }
+      }
+    }
+
+    // TODO: animate lock
+    // TODO: play lock sound
+    // TODO: play lock animation and do all below on complete
+    this._blocksContainer.removeChild(this._tetromino);
+    this._tetromino = null;
+    blocks.forEach(b => {
+      b.visible = true;
+    });
+    this.spawnTetromino();
+    this._locking = false;
   }
 
   resetDropCounter() {
@@ -243,35 +274,35 @@ class SoloGameScene extends Scene {
   }
 
   onRotateCWActionDown() {
-    if (this._paused) {
+    if (this._paused || this._locking) {
       return;
     }
     this.rotateTetromino('CW');
   }
 
   onRotateCCWActionDown() {
-    if (this._paused) {
+    if (this._paused || this._locking) {
       return;
     }
     this.rotateTetromino('CCW');
   }
 
   onShiftLeftActionDown() {
-    if (this._paused) {
+    if (this._paused || this._locking) {
       return;
     }
     this.shiftTetromino([-1, 0]);
   }
 
   onShiftRightActionDown() {
-    if (this._paused) {
+    if (this._paused || this._locking) {
       return;
     }
     this.shiftTetromino([1, 0]);
   }
 
   onSoftDropActionDown() {
-    if (this._paused) {
+    if (this._paused || this._locking) {
       return;
     }
     // +1 point for every pixel traveled
@@ -279,7 +310,7 @@ class SoloGameScene extends Scene {
   }
 
   onHardDropActionDown() {
-    if (this._paused) {
+    if (this._paused || this._locking) {
       return;
     }
     console.log(this);
@@ -303,7 +334,7 @@ class SoloGameScene extends Scene {
   }
 
   onTick(delta) {
-    if (this._paused) {
+    if (this._paused || this._locking) {
       return;
     }
     if (this._dropCounter <= 0) {

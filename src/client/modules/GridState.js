@@ -76,6 +76,10 @@ class GridState {
       }
     }
   }
+
+  get state() {
+    return this._state;
+  }
 }
 
 export default GridState;

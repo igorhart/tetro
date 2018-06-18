@@ -23,6 +23,7 @@
     "import/no-mutable-exports": 0,
     "no-lonely-if": 0,
     "no-mixed-operators": 0,
+    "no-param-reassign": ["error", { "props": false }],
     "no-underscore-dangle": 0,
     "object-curly-newline": 0
   }

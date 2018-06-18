@@ -1,6 +1,6 @@
 import { Container } from 'pixi.js';
 import Block from 'client/modules/Block';
-import { BLOCK_SIZE, BLOCK_GAP, GRID_UNIT } from 'client/constants/dimensions';
+import { BLOCK_SIZE, GRID_UNIT } from 'client/constants/dimensions';
 import { wallKicks } from 'client/tetrominoData';
 import { deg2rad } from 'client/utils';
 
@@ -27,8 +27,8 @@ class Tetromino extends Container {
         const value = state[rowIndex][colIndex];
         if (value === 1) {
           const block = new Block({ type: this._type });
-          block.x = BLOCK_SIZE / 2 + colIndex * BLOCK_SIZE + colIndex * BLOCK_GAP;
-          block.y = BLOCK_SIZE / 2 + rowIndex * BLOCK_SIZE + rowIndex * BLOCK_GAP;
+          block.x = BLOCK_SIZE / 2 + colIndex * GRID_UNIT;
+          block.y = BLOCK_SIZE / 2 + rowIndex * GRID_UNIT;
           this.addChild(block);
         }
       }
