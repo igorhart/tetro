@@ -1,4 +1,5 @@
 import { Container, filters } from 'pixi.js';
+import { TweenMax } from 'gsap/all';
 import InputManager from 'client/managers/InputManager';
 import Grid from 'client/gui/Grid';
 import Bag from 'client/modules/Bag';
@@ -50,6 +51,8 @@ class SoloGameScene extends Scene {
   reset() {
     this._paused = true;
     this._locking = false;
+    this._clearing = false;
+    this._gameOver = false;
     this._bag = new Bag();
     this._gridState.clear();
     this._blocksContainer.removeChildren();
@@ -220,11 +223,15 @@ class SoloGameScene extends Scene {
   dropTetromino() {
     this.resetDropCounter();
     if (!this.shiftTetromino([0, 1])) {
-      this.lockTetromino();
+      this.lockTetromino(() => {
+        this.clearLines(() => {
+          this.spawnTetromino();
+        });
+      });
     }
   }
 
-  lockTetromino() {
+  lockTetromino(cb) {
     this._locking = true;
     const [gridX, gridY] = this._tetromino._gridPosition;
     const { size, state, type } = this._tetromino;
@@ -246,16 +253,37 @@ class SoloGameScene extends Scene {
       }
     }
 
-    // TODO: animate lock
+    // TODO: improve lock animation
     // TODO: play lock sound
-    // TODO: play lock animation and do all below on complete
-    this._blocksContainer.removeChild(this._tetromino);
-    this._tetromino = null;
-    blocks.forEach(b => {
-      b.visible = true;
+    this._lockAnimation = TweenMax.to(this._tetromino, 0.1, {
+      alpha: 0.5,
+      yoyo: true,
+      onComplete: () => {
+        this._blocksContainer.removeChild(this._tetromino);
+        this._tetromino = null;
+        blocks.forEach(b => {
+          b.visible = true;
+        });
+        this._locking = false;
+        cb();
+      }
     });
-    this.spawnTetromino();
-    this._locking = false;
+  }
+
+  clearLines(cb) {
+    this._clearing = true;
+    // TODO: check if there are lines to clear
+    // TODO: clear lines in data
+    // TODO: clear blocks
+    // TODO: mark individual segments above cleared lines
+    // TODO: collect segments' blocks into containers
+    // TODO: drop segments in data
+    // TODO: drop segments on the screen
+    // TODO: repeat! recursive!
+    // TODO: finish clearing by calling cb()
+    console.log('LINES CLEARED', this);
+    this._clearing = false;
+    cb();
   }
 
   resetDropCounter() {
@@ -273,36 +301,40 @@ class SoloGameScene extends Scene {
     this._inputManager.onActionDown(actions.RETRY, this.onRetryActionDown);
   }
 
+  actionsPrevented() {
+    return this._paused || this._locking || this._clearing || this.gameOver;
+  }
+
   onRotateCWActionDown() {
-    if (this._paused || this._locking) {
+    if (this.actionsPrevented()) {
       return;
     }
     this.rotateTetromino('CW');
   }
 
   onRotateCCWActionDown() {
-    if (this._paused || this._locking) {
+    if (this.actionsPrevented()) {
       return;
     }
     this.rotateTetromino('CCW');
   }
 
   onShiftLeftActionDown() {
-    if (this._paused || this._locking) {
+    if (this.actionsPrevented()) {
       return;
     }
     this.shiftTetromino([-1, 0]);
   }
 
   onShiftRightActionDown() {
-    if (this._paused || this._locking) {
+    if (this.actionsPrevented()) {
       return;
     }
     this.shiftTetromino([1, 0]);
   }
 
   onSoftDropActionDown() {
-    if (this._paused || this._locking) {
+    if (this.actionsPrevented()) {
       return;
     }
     // +1 point for every pixel traveled
@@ -310,7 +342,7 @@ class SoloGameScene extends Scene {
   }
 
   onHardDropActionDown() {
-    if (this._paused || this._locking) {
+    if (this.actionsPrevented()) {
       return;
     }
     console.log(this);
@@ -334,7 +366,7 @@ class SoloGameScene extends Scene {
   }
 
   onTick(delta) {
-    if (this._paused || this._locking) {
+    if (this.actionsPrevented()) {
       return;
     }
     if (this._dropCounter <= 0) {
@@ -348,7 +380,6 @@ class SoloGameScene extends Scene {
     blur.blur = 20;
     this._guiBlurFilter = blur;
 
-    // TODO: shake this._guiContainer when lines cleared (single = tiny shake, tetris = solid shake)
     const gui = new Container();
     this._gui = gui;
     this.addChild(gui);
