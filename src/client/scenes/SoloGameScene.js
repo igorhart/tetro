@@ -26,6 +26,7 @@ class SoloGameScene extends Scene {
   constructor({ id }) {
     super({ id });
 
+    this.onAnyActionDown = this.onAnyActionDown.bind(this);
     this.onRotateCWActionDown = this.onRotateCWActionDown.bind(this);
     this.onRotateCCWActionDown = this.onRotateCCWActionDown.bind(this);
     this.onShiftLeftActionDown = this.onShiftLeftActionDown.bind(this);
@@ -53,6 +54,7 @@ class SoloGameScene extends Scene {
     this._locking = false;
     this._clearing = false;
     this._gameOver = false;
+
     this._bag = new Bag();
     this._gridState.clear();
     this._blocksContainer.removeChildren();
@@ -60,15 +62,12 @@ class SoloGameScene extends Scene {
     this._tetromino = null;
     this._ghost = null;
 
-    if (this._nextTetromino) {
-      // this._nextTetrominoContainer.removeChildren();
-      // this._nextTetromino.destroy(true);
-      this._nextTetromino = null;
-    }
+    // this._nextTetrominoContainer.removeChildren();
+    this._nextTetromino = null;
 
     this._linesCleared = 0;
     this._score = STARTING_SCORE;
-    this._highScore = 0; // TODO: get it from LocalStorage or set to zero
+    this._highScore = this.getHighScore(); // TODO: get it from LocalStorage or set to zero
     this._level = STARTING_LEVEL;
     this.resetDropCounter();
     this.blurGUI();
@@ -147,28 +146,47 @@ class SoloGameScene extends Scene {
     this._countdownOverlay.stop();
   }
 
-  // gameOver() {
-  //
-  // }
+  gameOver() {
+    this._gameOver = true;
+    // TODO: show gameOverOverlay (score info, flashing "Press any key to retry")
+    // TODO: play game over sound
+    // TODO: if score > highScore -> LocalStorage
+  }
+
+  getHighScore() {
+    // TODO: retrieve high score from LocalStorage
+    return 0;
+  }
 
   spawnTetromino() {
     if (this._nextTetromino) {
-      this._tetromino = this._nextTetromino;
+      this._tetromino = this.getNewTetrominoOfType(this._nextTetromino.type);
+      // TODO: clear nextTetromino
     } else {
-      this._tetromino = this.getRandomTetromino();
+      this._tetromino = this.getNewRandomTetromino();
     }
-    this._nextTetromino = this.getRandomTetromino();
+    // TODO: create ghost
+    this._nextTetromino = this.getNewRandomTetromino();
     // this._ghost.alpha = GHOST_ALPHA;
 
     this._blocksContainer.addChild(this._tetromino);
+    // TODO: add ghost
     this._tetromino._gridPosition = this._tetromino.type === types.I.type ? [0, -1] : [0, 0];
     // move to [0, 0]
     this._tetromino.position.set(this._tetromino.pivot.x, this._tetromino.pivot.y);
+    // TODO: move ghost
     // move to initial spawn position
-    this.shiftTetromino(this._tetromino.spawnVector);
+    if (!this.shiftTetromino(this._tetromino.spawnVector)) {
+      this._tetromino.visible = false;
+      this.gameOver();
+    }
   }
 
-  getRandomTetromino() {
+  getNewTetrominoOfType(type) {
+    return new Tetromino(types[type]);
+  }
+
+  getNewRandomTetromino() {
     return new Tetromino(types[this._bag.pick()]);
   }
 
@@ -275,6 +293,7 @@ class SoloGameScene extends Scene {
     // TODO: check if there are lines to clear
     // TODO: clear lines in data
     // TODO: clear blocks
+    // TODO: play clearing sound
     // TODO: mark individual segments above cleared lines
     // TODO: collect segments' blocks into containers
     // TODO: drop segments in data
@@ -291,6 +310,7 @@ class SoloGameScene extends Scene {
   }
 
   addActionListeners() {
+    this._inputManager.onActionDown(actions.ANY, this.onAnyActionDown);
     this._inputManager.onActionDown(actions.ROTATE_CW, this.onRotateCWActionDown);
     this._inputManager.onActionDown(actions.ROTATE_CCW, this.onRotateCCWActionDown);
     this._inputManager.onActionDown(actions.SHIFT_LEFT, this.onShiftLeftActionDown);
@@ -302,7 +322,14 @@ class SoloGameScene extends Scene {
   }
 
   actionsPrevented() {
-    return this._paused || this._locking || this._clearing || this.gameOver;
+    return this._paused || this._locking || this._clearing || this._gameOver;
+  }
+
+  onAnyActionDown() {
+    if (this._gameOver) {
+      // TODO: hide gameOverOverlay
+      this.retry();
+    }
   }
 
   onRotateCWActionDown() {
@@ -349,6 +376,9 @@ class SoloGameScene extends Scene {
   }
 
   onPauseActionDown() {
+    if (this._gameOver) {
+      return;
+    }
     if (this._counting) {
       this.pause();
     } else if (this._paused) {
@@ -359,7 +389,7 @@ class SoloGameScene extends Scene {
   }
 
   onRetryActionDown() {
-    if (this._paused) {
+    if (this._paused || this._gameOver) {
       return;
     }
     this.retry();
