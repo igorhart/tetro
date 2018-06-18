@@ -4,6 +4,9 @@
     "browser": true,
     "jest": true
   },
+  "globals": {
+    "VERSION": true
+  },
   "settings": {
     "import/resolver": {
       "babel-module": {}

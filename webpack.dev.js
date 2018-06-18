@@ -28,7 +28,8 @@ module.exports = merge(common, {
   plugins: [
     new webpack.DefinePlugin({
       'process.env.HOST': JSON.stringify(process.env.HOST || 'localhost'),
-      'process.env.PORT': JSON.stringify(process.env.PORT || 80)
+      'process.env.PORT': JSON.stringify(process.env.PORT || 80),
+      VERSION: JSON.stringify(process.env.npm_package_version)
     }),
     new FriendlyErrorsPlugin({
       onErrors: (severity, errors) => {

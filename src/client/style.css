@@ -2,3 +2,11 @@
   margin: 0;
   padding: 0;
 }
+
+.version {
+  color: #f62078;
+  font: 10px/1 'Lucida Console', Monaco, monospace;
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+}

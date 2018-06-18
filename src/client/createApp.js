@@ -10,7 +10,12 @@ const app = new Application({
   transparent: false
 });
 
+const version = document.createElement('div');
+version.innerHTML = `v. ${VERSION}`;
+version.classList.add('version');
+
 document.body.append(app.view);
+document.body.append(version);
 
 app.renderer.view.style.display = 'block';
 app.renderer.view.style.position = 'absolute';
