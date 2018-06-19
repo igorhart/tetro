@@ -42,24 +42,15 @@ class LoadingScene extends Scene {
     //   }
     // });
 
-    if (assets.length) {
-      // TODO: move loader logic into AssetManager singleton and call AssetManager.load(() => ...)
-      loader
-        .add(assets)
-        .on('progress', () => {
-          this._preloader.progress = loader.progress;
-        })
-        .on('complete', () => {
-          // TODO: prepare audio files with sound.js before continuing
-          this.sceneManager.loadScene(scenes.CONTROLS);
-        })
-        .load();
-    } else {
-      this._preloader.progress = 100;
-      setTimeout(() => {
+    loader
+      .add(assets)
+      .on('progress', () => {
+        this._preloader.progress = loader.progress;
+      })
+      .on('complete', () => {
         this.sceneManager.loadScene(scenes.CONTROLS);
-      });
-    }
+      })
+      .load();
   }
 
   onTick() {
