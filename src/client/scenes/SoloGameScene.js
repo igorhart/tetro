@@ -15,7 +15,7 @@ import { BLOCK_SIZE, GRID_COLS, GRID_ROWS, GRID_UNIT } from 'client/constants/di
 import {
   DROP_FRAMES_PER_LEVEL,
   FPS,
-  // GHOST_ALPHA,
+  GHOST_ALPHA,
   // LINES_TO_CLEAR_PER_LEVEL,
   MAX_SPEED_LEVEL,
   STARTING_LEVEL,
@@ -63,12 +63,12 @@ class SoloGameScene extends Scene {
     this._tetromino = null;
     this._ghost = null;
 
-    // this._nextTetrominoContainer.removeChildren();
+    // TODO: this._nextTetrominoContainer.removeChildren();
     this._nextTetromino = null;
 
     this._linesCleared = 0;
     this._score = STARTING_SCORE;
-    this._highScore = this.getHighScore(); // TODO: get it from LocalStorage or set to zero
+    this._highScore = this.getHighScore();
     this._level = STARTING_LEVEL;
     this.resetDropCounter();
     this.blurGUI();
@@ -101,6 +101,7 @@ class SoloGameScene extends Scene {
   }
 
   retry() {
+    this.hidePauseOverlay();
     this.reset();
     this.start();
   }
@@ -166,20 +167,25 @@ class SoloGameScene extends Scene {
     } else {
       this._tetromino = this.getNewRandomTetromino();
     }
-    // TODO: create ghost
     this._nextTetromino = this.getNewRandomTetromino();
-    // this._ghost.alpha = GHOST_ALPHA;
+
+    this._ghost = this.getNewTetrominoOfType(this._tetromino.type);
+    this._ghost.alpha = GHOST_ALPHA;
 
     this._blocksContainer.addChild(this._tetromino);
-    // TODO: add ghost
-    this._tetromino._gridPosition = this._tetromino.type === types.I.type ? [0, -1] : [0, 0];
+    this._blocksContainer.addChild(this._ghost);
+
+    const initialGridPosition = this._tetromino.type === types.I.type ? [0, -1] : [0, 0];
+    this._tetromino._gridPosition = initialGridPosition;
+    this._ghost._gridPosition = initialGridPosition;
     // move to [0, 0]
     this._tetromino.position.set(this._tetromino.pivot.x, this._tetromino.pivot.y);
-    // TODO: move ghost
-    // move to initial spawn position
+    this._ghost.position.set(this._ghost.pivot.x, this._ghost.pivot.y);
 
+    // move to initial spawn position
     if (!this.shiftTetromino(this._tetromino.spawnVector)) {
       this._tetromino.visible = false;
+      this._ghost.visible = false;
       this.gameOver();
     }
   }
@@ -195,7 +201,9 @@ class SoloGameScene extends Scene {
   shiftTetromino([x, y]) {
     const [gridX, gridY] = this._tetromino._gridPosition;
     const newPos = [gridX + x, gridY + y];
+    const ghostY = this._ghost._gridPosition[1];
 
+    // check if shift is possible
     if (
       !this._gridState.isCollision({
         x: newPos[0],
@@ -205,7 +213,24 @@ class SoloGameScene extends Scene {
       })
     ) {
       this._tetromino._gridPosition = newPos;
+      this._ghost._gridPosition = newPos;
       this._tetromino.translate([x, y]);
+      this._ghost.translate([x, -(ghostY - newPos[1])]);
+
+      const ghostX = this._ghost._gridPosition[0];
+      let newGhostY = this._ghost._gridPosition[1] + 1;
+      while (
+        !this._gridState.isCollision({
+          x: ghostX,
+          y: newGhostY,
+          size: this._ghost.size,
+          other: this._ghost.state
+        })
+      ) {
+        this._ghost._gridPosition = [ghostX, newGhostY];
+        this._ghost.translate([0, 1]);
+        newGhostY += 1;
+      }
       return true;
     }
     return false;
@@ -213,11 +238,12 @@ class SoloGameScene extends Scene {
 
   rotateTetromino(direction) {
     const wallKicks = this._tetromino[`rotate${direction}`]();
+    this._ghost[`rotate${direction}`]();
     let canRotate = false;
     if (wallKicks.length) {
       for (let i = 0; i < wallKicks.length; i += 1) {
         const [x, y] = wallKicks[i];
-        const vector = [x, -y]; // y has to be inverted because SRS has y axis increasing up
+        const vector = [x, -y]; // y has to be inverted because SRS has y axis pointing up
         if (this.shiftTetromino(vector)) {
           canRotate = true;
           break;
@@ -227,16 +253,17 @@ class SoloGameScene extends Scene {
       canRotate = true;
     }
 
-    if (canRotate) {
-      // TODO: rotate ghost
-      // TODO: translate ghost
-    } else {
-      // rotation failed, rotate back
+    // rotation impossible, rotate back :(
+    if (!canRotate) {
       if (direction === 'CW') {
         this._tetromino.rotateCCW();
+        this._ghost.rotateCCW();
       } else {
         this._tetromino.rotateCW();
+        this._ghost.rotateCW();
       }
+      // translate in place to update ghost
+      this.shiftTetromino([0, 0]);
     }
   }
 
@@ -252,6 +279,10 @@ class SoloGameScene extends Scene {
     }
     return true;
   }
+
+  // hardDropTetromino() {
+  //
+  // }
 
   lockTetromino(cb) {
     this._locking = true;
@@ -283,6 +314,8 @@ class SoloGameScene extends Scene {
       onComplete: () => {
         this._blocksContainer.removeChild(this._tetromino);
         this._tetromino = null;
+        this._blocksContainer.removeChild(this._ghost);
+        this._ghost = null;
         blocks.forEach(b => {
           b.visible = true;
         });
@@ -423,7 +456,7 @@ class SoloGameScene extends Scene {
   }
 
   onRetryActionDown() {
-    if (this._paused || this._gameOver) {
+    if (this._gameOver) {
       return;
     }
     this.retry();
