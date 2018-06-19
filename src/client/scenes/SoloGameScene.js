@@ -280,9 +280,21 @@ class SoloGameScene extends Scene {
     return true;
   }
 
-  // hardDropTetromino() {
-  //
-  // }
+  hardDropTetromino() {
+    this.resetDropCounter();
+    const y = this._tetromino._gridPosition[1];
+    const ghostY = this._ghost._gridPosition[1];
+    if (this.shiftTetromino([0, ghostY - y])) {
+      // TODO: display ray from above after quick fall
+      this.lockTetromino(() => {
+        this.clearLines(() => {
+          this.spawnTetromino();
+        });
+      });
+      return false;
+    }
+    return true;
+  }
 
   lockTetromino(cb) {
     this._locking = true;
@@ -431,7 +443,7 @@ class SoloGameScene extends Scene {
     if (this.actionsPrevented()) {
       return;
     }
-    // +1 point for every pixel traveled
+    // TODO: +1 point for every grid unit traveled
     this.dropTetromino();
   }
 
@@ -439,7 +451,8 @@ class SoloGameScene extends Scene {
     if (this.actionsPrevented()) {
       return;
     }
-    console.log(this);
+    // TODO: +2 points for every grid unit traveled
+    this.hardDropTetromino();
   }
 
   onPauseActionDown() {
