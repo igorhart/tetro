@@ -35,7 +35,7 @@ class CountdownOverlay extends Container {
     this.positionText();
     this._text.alpha = 0;
     this._text.scale.set(2);
-    this._countdownAnimation = TweenMax.to(this._text, 0.7, {
+    this._countdownAnimation = TweenMax.to(this._text, 0.5, {
       alpha: 1,
       pixi: {
         scaleX: 1,

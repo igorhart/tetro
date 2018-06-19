@@ -1,7 +1,8 @@
-import { loader } from 'pixi.js';
+import { loader, sound } from 'pixi.js';
 // import { RoughEase, TweenMax } from 'gsap/all';
 import Preloader from 'client/gui/Preloader';
 import Scene from 'client/modules/Scene';
+import { BGM_VOLUME } from 'client/constants/game';
 import scenes from 'client/constants/scenes';
 import assets from 'client/assets';
 
@@ -41,6 +42,12 @@ class LoadingScene extends Scene {
     //     this.sceneManager.loadScene(scenes.CONTROLS);
     //   }
     // });
+
+    sound.add('bgm', {
+      url: 'assets/audio/bgm.mp3',
+      singleInstance: true,
+      volume: BGM_VOLUME
+    });
 
     loader
       .add(assets)

@@ -11,8 +11,6 @@ class Game {
   constructor(app) {
     this._app = app;
 
-    // TODO: this._audioManager = new AudioManager();
-
     this._inputManager = new InputManager().addActions({
       [actions.ROTATE_CW]: [keys.ARROW_UP, keys.X],
       [actions.ROTATE_CCW]: [keys.Z],

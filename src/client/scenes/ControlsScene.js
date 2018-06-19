@@ -1,3 +1,4 @@
+import { sound } from 'pixi.js';
 import InputManager from 'client/managers/InputManager';
 import Scene from 'client/modules/Scene';
 import actions from 'client/constants/actions';
@@ -20,9 +21,11 @@ class ControlsScene extends Scene {
     // this.background.tint = MAIN_MENU_BACKGROUND_COLOR;
     // this.addControls();
 
+    sound.play('bgm', { loop: true });
+
     // TODO: remove when ready
     setTimeout(() => {
-      this.onAnyActionDown();
+      // this.onAnyActionDown();
     });
 
     this._actionListeners = [
