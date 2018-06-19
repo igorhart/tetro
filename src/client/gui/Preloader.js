@@ -1,6 +1,4 @@
-import { Container, Graphics, settings } from 'pixi.js';
-import { GlowFilter } from 'pixi-filters';
-import colors from 'client/constants/colors';
+import { Container, Graphics } from 'pixi.js';
 import { GLOW_PADDING } from 'client/constants/dimensions';
 
 class Preloader extends Container {
@@ -17,8 +15,6 @@ class Preloader extends Container {
   }
 
   createProgressBar() {
-    const res = settings.RESOLUTION;
-    const glowFilter = new GlowFilter(10 * res, 1, 0, colors.PRELOADER, 1);
     this.pivot.set(48, 32);
 
     const progressBackground = new Graphics();
@@ -29,7 +25,6 @@ class Preloader extends Container {
     this.addChild(progressBackground);
 
     const progressContainer = new Container();
-    progressContainer.filters = [glowFilter];
     this.addChild(progressContainer);
 
     // because otherwise glow filter is clipped by the container... :/

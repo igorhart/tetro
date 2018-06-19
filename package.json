@@ -24,7 +24,9 @@
     "test": "jest",
     "test:watch": "jest --watch"
   },
-  "browserslist": ["last 2 versions"],
+  "browserslist": [
+    "last 2 versions"
+  ],
   "jest": {
     "testEnvironment": "node"
   },
@@ -71,7 +73,7 @@
   "dependencies": {
     "express": "^4.16.3",
     "gsap": "^2.0.1",
-    "pixi-filters": "^2.6.1",
+    "pixi-sound": "^2.0.2",
     "pixi.js": "^4.8.0"
   }
 }
