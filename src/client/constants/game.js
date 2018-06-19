@@ -1,4 +1,8 @@
 export const DROP_FRAMES_PER_LEVEL = 3;
+export const DROP_REPEAT_FRAMES = 5;
+export const DROP_REPEAT_FIRST_TIME_EXTRA_FRAMES = 2;
+export const SHIFT_REPEAT_FRAMES = 5;
+export const SHIFT_REPEAT_FIRST_TIME_EXTRA_FRAMES = 2;
 export const FPS = 60;
 export const GHOST_ALPHA = 0.4;
 export const LINES_TO_CLEAR_PER_LEVEL = 10;

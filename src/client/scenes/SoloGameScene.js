@@ -14,6 +14,10 @@ import actions from 'client/constants/actions';
 import { BLOCK_SIZE, GRID_COLS, GRID_ROWS, GRID_UNIT } from 'client/constants/dimensions';
 import {
   DROP_FRAMES_PER_LEVEL,
+  DROP_REPEAT_FRAMES,
+  DROP_REPEAT_FIRST_TIME_EXTRA_FRAMES,
+  SHIFT_REPEAT_FRAMES,
+  SHIFT_REPEAT_FIRST_TIME_EXTRA_FRAMES,
   FPS,
   GHOST_ALPHA,
   // LINES_TO_CLEAR_PER_LEVEL,
@@ -31,7 +35,9 @@ class SoloGameScene extends Scene {
     this.onRotateCWActionDown = this.onRotateCWActionDown.bind(this);
     this.onRotateCCWActionDown = this.onRotateCCWActionDown.bind(this);
     this.onShiftLeftActionDown = this.onShiftLeftActionDown.bind(this);
+    this.onShiftLeftActionUp = this.onShiftLeftActionUp.bind(this);
     this.onShiftRightActionDown = this.onShiftRightActionDown.bind(this);
+    this.onShiftRightActionUp = this.onShiftRightActionUp.bind(this);
     this.onSoftDropActionDown = this.onSoftDropActionDown.bind(this);
     this.onHardDropActionDown = this.onHardDropActionDown.bind(this);
     this.onPauseActionDown = this.onPauseActionDown.bind(this);
@@ -71,6 +77,9 @@ class SoloGameScene extends Scene {
     this._highScore = this.getHighScore();
     this._level = STARTING_LEVEL;
     this.resetDropCounter();
+    this.resetDropRepeatCounter();
+    this.resetShiftRepeatCounter();
+    this._shiftRepeatActionsByPriority = [actions.SHIFT_LEFT, actions.SHIFT_RIGHT];
     this.blurGUI();
   }
 
@@ -388,12 +397,22 @@ class SoloGameScene extends Scene {
     this._dropCounter = FPS - Math.min(this._level, MAX_SPEED_LEVEL) * DROP_FRAMES_PER_LEVEL;
   }
 
+  resetDropRepeatCounter(extraFrames = 0) {
+    this._dropRepeatCounter = DROP_REPEAT_FRAMES + extraFrames;
+  }
+
+  resetShiftRepeatCounter(extraFrames = 0) {
+    this._shiftRepeatCounter = SHIFT_REPEAT_FRAMES + extraFrames;
+  }
+
   addActionListeners() {
     this._inputManager.onActionDown(actions.ANY, this.onAnyActionDown);
     this._inputManager.onActionDown(actions.ROTATE_CW, this.onRotateCWActionDown);
     this._inputManager.onActionDown(actions.ROTATE_CCW, this.onRotateCCWActionDown);
     this._inputManager.onActionDown(actions.SHIFT_LEFT, this.onShiftLeftActionDown);
+    this._inputManager.onActionUp(actions.SHIFT_LEFT, this.onShiftLeftActionUp);
     this._inputManager.onActionDown(actions.SHIFT_RIGHT, this.onShiftRightActionDown);
+    this._inputManager.onActionUp(actions.SHIFT_RIGHT, this.onShiftRightActionUp);
     this._inputManager.onActionDown(actions.SOFT_DROP, this.onSoftDropActionDown);
     this._inputManager.onActionDown(actions.HARD_DROP, this.onHardDropActionDown);
     this._inputManager.onActionDown(actions.PAUSE, this.onPauseActionDown);
@@ -429,14 +448,26 @@ class SoloGameScene extends Scene {
     if (this.actionsPrevented()) {
       return;
     }
+    this.resetShiftRepeatCounter(SHIFT_REPEAT_FIRST_TIME_EXTRA_FRAMES);
+    this._shiftRepeatActionsByPriority = [actions.SHIFT_LEFT, actions.SHIFT_RIGHT];
     this.shiftTetromino([-1, 0]);
+  }
+
+  onShiftLeftActionUp() {
+    this._shiftRepeatActionsByPriority = [actions.SHIFT_RIGHT, actions.SHIFT_LEFT];
   }
 
   onShiftRightActionDown() {
     if (this.actionsPrevented()) {
       return;
     }
+    this.resetShiftRepeatCounter(SHIFT_REPEAT_FIRST_TIME_EXTRA_FRAMES);
+    this._shiftRepeatActionsByPriority = [actions.SHIFT_RIGHT, actions.SHIFT_LEFT];
     this.shiftTetromino([1, 0]);
+  }
+
+  onShiftRightActionUp() {
+    this._shiftRepeatActionsByPriority = [actions.SHIFT_LEFT, actions.SHIFT_RIGHT];
   }
 
   onSoftDropActionDown() {
@@ -444,6 +475,7 @@ class SoloGameScene extends Scene {
       return;
     }
     // TODO: +1 point for every grid unit traveled
+    this.resetDropRepeatCounter(DROP_REPEAT_FIRST_TIME_EXTRA_FRAMES);
     this.dropTetromino();
   }
 
@@ -478,6 +510,27 @@ class SoloGameScene extends Scene {
   onTick(delta) {
     if (this.actionsPrevented()) {
       return;
+    }
+    if (InputManager.getInstance().isActionDown(actions.SOFT_DROP)) {
+      if (this._dropRepeatCounter <= 0) {
+        this.resetDropRepeatCounter();
+        this.dropTetromino();
+      } else {
+        this._dropRepeatCounter -= delta;
+      }
+    }
+    const shiftAction = this._shiftRepeatActionsByPriority[0];
+    if (InputManager.getInstance().isActionDown(shiftAction)) {
+      if (this._shiftRepeatCounter <= 0) {
+        this.resetShiftRepeatCounter();
+        if (shiftAction === actions.SHIFT_LEFT) {
+          this.shiftTetromino([-1, 0]);
+        } else {
+          this.shiftTetromino([1, 0]);
+        }
+      } else {
+        this._shiftRepeatCounter -= delta;
+      }
     }
     if (this._dropCounter <= 0) {
       this.dropTetromino();
