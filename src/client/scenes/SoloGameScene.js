@@ -1,5 +1,5 @@
-import { Container, filters } from 'pixi.js';
-import { TweenMax } from 'gsap/all';
+import { Container, filters, sound } from 'pixi.js';
+import { TimelineMax, TweenMax } from 'gsap/all';
 import InputManager from 'client/managers/InputManager';
 import Grid from 'client/gui/Grid';
 import Bag from 'client/modules/Bag';
@@ -23,7 +23,8 @@ import {
   // LINES_TO_CLEAR_PER_LEVEL,
   MAX_SPEED_LEVEL,
   STARTING_LEVEL,
-  STARTING_SCORE
+  STARTING_SCORE,
+  SFX_VOLUME
 } from 'client/constants/game';
 import { numericSort } from 'client/utils';
 
@@ -31,7 +32,6 @@ class SoloGameScene extends Scene {
   constructor({ id }) {
     super({ id });
 
-    this.onAnyActionDown = this.onAnyActionDown.bind(this);
     this.onRotateCWActionDown = this.onRotateCWActionDown.bind(this);
     this.onRotateCCWActionDown = this.onRotateCCWActionDown.bind(this);
     this.onShiftLeftActionDown = this.onShiftLeftActionDown.bind(this);
@@ -95,6 +95,7 @@ class SoloGameScene extends Scene {
   pause() {
     this.stopCountdown();
     this._paused = true;
+    sound.play('pause', { volume: SFX_VOLUME });
     this.hideBlocks();
     this.blurGUI();
     this.showPauseOverlay();
@@ -159,8 +160,10 @@ class SoloGameScene extends Scene {
 
   gameOver() {
     this._gameOver = true;
+    this.hideBlocks();
+    this.blurGUI();
+    sound.play('game_over', { volume: SFX_VOLUME });
     // TODO: show gameOverOverlay (score info, flashing "Press any key to retry")
-    // TODO: play game over sound
     // TODO: if score > highScore -> LocalStorage
   }
 
@@ -273,6 +276,8 @@ class SoloGameScene extends Scene {
       }
       // translate in place to update ghost
       this.shiftTetromino([0, 0]);
+    } else {
+      sound.play('rotate', { volume: SFX_VOLUME });
     }
   }
 
@@ -327,8 +332,7 @@ class SoloGameScene extends Scene {
       }
     }
 
-    // TODO: improve lock animation
-    // TODO: play lock sound
+    sound.play('lock', { volume: SFX_VOLUME });
     this._lockAnimation = TweenMax.to(this._tetromino, 0.1, {
       alpha: 0.5,
       yoyo: true,
@@ -359,34 +363,35 @@ class SoloGameScene extends Scene {
         }
       });
 
-      // TODO: play clearing sound
-      // TODO: TweenMax blocks before remove
+      sound.play('clear', { volume: SFX_VOLUME });
 
-      blocksToClear.forEach(block => {
-        this._blocksContainer.removeChild(block);
-      });
+      const tl = new TimelineMax({
+        onComplete: () => {
+          blocksToClear.forEach(block => {
+            this._blocksContainer.removeChild(block);
+          });
 
-      this._gridState.removeRowsAt(fullRowIndexes);
+          this._gridState.removeRowsAt(fullRowIndexes);
 
-      this._blocksContainer.children.forEach(child => {
-        if (child instanceof Block) {
-          const [x, y] = child._gridPosition;
-          const rowsToShiftDown = numericSort([y, ...fullRowIndexes])
-            .reverse()
-            .indexOf(y);
-          child._gridPosition = [x, y + rowsToShiftDown];
-          child.y += GRID_UNIT * rowsToShiftDown;
+          this._blocksContainer.children.forEach(child => {
+            if (child instanceof Block) {
+              const [x, y] = child._gridPosition;
+              const rowsToShiftDown = numericSort([y, ...fullRowIndexes])
+                .reverse()
+                .indexOf(y);
+              child._gridPosition = [x, y + rowsToShiftDown];
+              child.y += GRID_UNIT * rowsToShiftDown;
+            }
+          });
+
+          // TODO: this._linesCleared += fullRowIndexes;
+          this._clearing = false;
+          cb();
         }
       });
-      // TODO: mark individual segments above cleared lines
-      // TODO: collect segments' blocks into containers
-      // TODO: drop segments in data
-      // TODO: drop segments on the screen
-      // TODO: recursive repeat!
-      // TODO: finish clearing by calling cb()
-      this._clearing = false;
-      // TODO: increase linesCleared
-      cb();
+      blocksToClear.forEach(block => {
+        tl.to(block, 0.1, { alpha: 0.5 }, 0);
+      });
     } else {
       this._clearing = false;
       cb();
@@ -406,7 +411,6 @@ class SoloGameScene extends Scene {
   }
 
   addActionListeners() {
-    this._inputManager.onActionDown(actions.ANY, this.onAnyActionDown);
     this._inputManager.onActionDown(actions.ROTATE_CW, this.onRotateCWActionDown);
     this._inputManager.onActionDown(actions.ROTATE_CCW, this.onRotateCCWActionDown);
     this._inputManager.onActionDown(actions.SHIFT_LEFT, this.onShiftLeftActionDown);
@@ -421,13 +425,6 @@ class SoloGameScene extends Scene {
 
   actionsPrevented() {
     return this._paused || this._locking || this._clearing || this._gameOver;
-  }
-
-  onAnyActionDown() {
-    if (this._gameOver) {
-      // TODO: hide gameOverOverlay
-      this.retry();
-    }
   }
 
   onRotateCWActionDown() {
@@ -450,7 +447,9 @@ class SoloGameScene extends Scene {
     }
     this.resetShiftRepeatCounter(SHIFT_REPEAT_FIRST_TIME_EXTRA_FRAMES);
     this._shiftRepeatActionsByPriority = [actions.SHIFT_LEFT, actions.SHIFT_RIGHT];
-    this.shiftTetromino([-1, 0]);
+    if (this.shiftTetromino([-1, 0])) {
+      sound.play('shift', { volume: SFX_VOLUME });
+    }
   }
 
   onShiftLeftActionUp() {
@@ -463,7 +462,9 @@ class SoloGameScene extends Scene {
     }
     this.resetShiftRepeatCounter(SHIFT_REPEAT_FIRST_TIME_EXTRA_FRAMES);
     this._shiftRepeatActionsByPriority = [actions.SHIFT_RIGHT, actions.SHIFT_LEFT];
-    this.shiftTetromino([1, 0]);
+    if (this.shiftTetromino([1, 0])) {
+      sound.play('shift', { volume: SFX_VOLUME });
+    }
   }
 
   onShiftRightActionUp() {
@@ -476,7 +477,9 @@ class SoloGameScene extends Scene {
     }
     // TODO: +1 point for every grid unit traveled
     this.resetDropRepeatCounter(DROP_REPEAT_FIRST_TIME_EXTRA_FRAMES);
-    this.dropTetromino();
+    if (this.dropTetromino()) {
+      sound.play('shift', { volume: SFX_VOLUME });
+    }
   }
 
   onHardDropActionDown() {
@@ -488,12 +491,10 @@ class SoloGameScene extends Scene {
   }
 
   onPauseActionDown() {
-    if (this._gameOver) {
+    if (this._gameOver || this._counting) {
       return;
     }
-    if (this._counting) {
-      this.pause();
-    } else if (this._paused) {
+    if (this._paused) {
       this.resume();
     } else {
       this.pause();
@@ -501,9 +502,6 @@ class SoloGameScene extends Scene {
   }
 
   onRetryActionDown() {
-    if (this._gameOver) {
-      return;
-    }
     this.retry();
   }
 
@@ -514,7 +512,9 @@ class SoloGameScene extends Scene {
     if (InputManager.getInstance().isActionDown(actions.SOFT_DROP)) {
       if (this._dropRepeatCounter <= 0) {
         this.resetDropRepeatCounter();
-        this.dropTetromino();
+        if (this.dropTetromino()) {
+          sound.play('shift', { volume: SFX_VOLUME });
+        }
       } else {
         this._dropRepeatCounter -= delta;
       }
@@ -524,9 +524,13 @@ class SoloGameScene extends Scene {
       if (this._shiftRepeatCounter <= 0) {
         this.resetShiftRepeatCounter();
         if (shiftAction === actions.SHIFT_LEFT) {
-          this.shiftTetromino([-1, 0]);
+          if (this.shiftTetromino([-1, 0])) {
+            sound.play('shift', { volume: SFX_VOLUME });
+          }
         } else {
-          this.shiftTetromino([1, 0]);
+          if (this.shiftTetromino([1, 0])) {
+            sound.play('shift', { volume: SFX_VOLUME });
+          }
         }
       } else {
         this._shiftRepeatCounter -= delta;

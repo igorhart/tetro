@@ -1,4 +1,33 @@
-let assets = [];
+let assets = [
+  {
+    name: 'count',
+    url: 'assets/audio/count.wav'
+  },
+  {
+    name: 'clear',
+    url: 'assets/audio/clear3.mp3'
+  },
+  {
+    name: 'game_over',
+    url: 'assets/audio/game_over.wav'
+  },
+  {
+    name: 'lock',
+    url: 'assets/audio/lock.mp3'
+  },
+  {
+    name: 'pause',
+    url: 'assets/audio/pause.wav'
+  },
+  {
+    name: 'rotate',
+    url: 'assets/audio/rotate.mp3'
+  },
+  {
+    name: 'shift',
+    url: 'assets/audio/shift.wav'
+  }
+];
 
 if (window.devicePixelRatio > 1) {
   assets = [

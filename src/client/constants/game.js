@@ -1,4 +1,5 @@
-export const BGM_VOLUME = 0.05;
+export const BGM_VOLUME = 0.1;
+export const SFX_VOLUME = 0.2;
 export const DROP_FRAMES_PER_LEVEL = 3;
 export const DROP_REPEAT_FRAMES = 5;
 export const DROP_REPEAT_FIRST_TIME_EXTRA_FRAMES = 2;

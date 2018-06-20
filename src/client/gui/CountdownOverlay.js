@@ -1,6 +1,7 @@
-import { Container, extras } from 'pixi.js';
+import { Container, extras, sound } from 'pixi.js';
 import { Expo, TweenMax } from 'gsap/all';
 import colors from 'client/constants/colors';
+import { SFX_VOLUME } from 'client/constants/game';
 
 class CountdownOverlay extends Container {
   constructor() {
@@ -35,7 +36,8 @@ class CountdownOverlay extends Container {
     this.positionText();
     this._text.alpha = 0;
     this._text.scale.set(2);
-    this._countdownAnimation = TweenMax.to(this._text, 0.5, {
+    sound.play('count', { volume: SFX_VOLUME });
+    this._countdownAnimation = TweenMax.to(this._text, 0.6, {
       alpha: 1,
       pixi: {
         scaleX: 1,
@@ -48,6 +50,7 @@ class CountdownOverlay extends Container {
           count -= 1;
           this._text.text = count;
           this.positionText();
+          sound.play('count', { volume: SFX_VOLUME });
         } else {
           cb();
         }
