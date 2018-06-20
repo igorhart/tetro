@@ -171,13 +171,36 @@ class SoloGameScene extends Scene {
     this.hideBlocks();
     this.blurGUI();
     sound.play('game_over', { volume: SFX_VOLUME });
-    // TODO: show gameOverOverlay (score info, flashing "Press any key to retry")
-    // TODO: if score > highScore -> LocalStorage
+    // TODO: show gameOverOverlay (score info, flashing "Press R to retry")
+    if (this._score > this.getHighScore()) {
+      this.setHighScore(this._score);
+    }
+  }
+
+  loadGameStats() {
+    let gameStats = localStorage.getItem('tetro');
+    if (gameStats) {
+      gameStats = JSON.parse(gameStats);
+    } else {
+      gameStats = { highScore: 0 };
+      localStorage.setItem('tetro', JSON.stringify(gameStats));
+    }
+    return gameStats;
+  }
+
+  saveGameStats(stats) {
+    localStorage.setItem('tetro', JSON.stringify(stats));
   }
 
   getHighScore() {
-    // TODO: retrieve high score from LocalStorage
-    return 0;
+    const gameStats = this.loadGameStats();
+    return gameStats.highScore;
+  }
+
+  setHighScore(newHighScore) {
+    const gameStats = this.loadGameStats();
+    gameStats.highScore = newHighScore;
+    this.saveGameStats(gameStats);
   }
 
   spawnTetromino() {
