@@ -2,7 +2,7 @@ import { Container, extras, Sprite, Texture } from 'pixi.js';
 import { TweenMax } from 'gsap/all';
 import colors from 'client/constants/colors';
 
-class PauseOverlay extends Container {
+class GameOverOverlay extends Container {
   constructor(parent) {
     super();
 
@@ -21,14 +21,14 @@ class PauseOverlay extends Container {
   }
 
   addText() {
-    const text = new extras.BitmapText('PAUSE', {
+    const text = new extras.BitmapText('GAME OVER', {
       align: 'center',
       font: {
         name: 'SF Alien Encounters',
         size: 36 * window.devicePixelRatio
       }
     });
-    text.tint = colors.PINK;
+    text.tint = colors.RED;
     text.anchor.set(0.5);
     text.position.set(Math.floor(this.width / 2), Math.floor(this.height / 2));
     this.addChild(text);
@@ -39,14 +39,14 @@ class PauseOverlay extends Container {
       repeat: -1
     });
 
-    const secondText = new extras.BitmapText('Press P to resume', {
+    const secondText = new extras.BitmapText('Press R to retry', {
       align: 'center',
       font: {
         name: 'SF Alien Encounters',
         size: 18 * window.devicePixelRatio
       }
     });
-    secondText.tint = colors.PINK;
+    secondText.tint = colors.RED;
     secondText.anchor.set(0.5);
     secondText.position.set(Math.floor(this.width / 2), Math.floor(this.height / 2) + 47);
     this.addChild(secondText);
@@ -70,4 +70,4 @@ class PauseOverlay extends Container {
   }
 }
 
-export default PauseOverlay;
+export default GameOverOverlay;

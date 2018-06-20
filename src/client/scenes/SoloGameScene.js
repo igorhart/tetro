@@ -1,4 +1,4 @@
-import { Container, filters, sound } from 'pixi.js';
+import { Container, filters, sound, Sprite, Texture } from 'pixi.js';
 import { TimelineMax, TweenMax } from 'gsap/all';
 import InputManager from 'client/managers/InputManager';
 import Grid from 'client/gui/Grid';
@@ -6,6 +6,7 @@ import Bag from 'client/modules/Bag';
 import Block from 'client/modules/Block';
 import GridState from 'client/modules/GridState';
 import CountdownOverlay from 'client/gui/CountdownOverlay';
+import GameOverOverlay from 'client/gui/GameOverOverlay';
 import PauseOverlay from 'client/gui/PauseOverlay';
 import Scene from 'client/modules/Scene';
 import Tetromino from 'client/modules/Tetromino';
@@ -119,6 +120,7 @@ class SoloGameScene extends Scene {
   }
 
   retry() {
+    this.hideGameOverOverlay();
     this.hidePauseOverlay();
     this.reset();
     this.start();
@@ -150,6 +152,14 @@ class SoloGameScene extends Scene {
     this._pauseOverlay.hide();
   }
 
+  showGameOverOverlay() {
+    this._gameOverOverlay.show(this);
+  }
+
+  hideGameOverOverlay() {
+    this._gameOverOverlay.hide();
+  }
+
   startCountdown(cb) {
     this._counting = true;
     this._countdownOverlay.visible = true;
@@ -171,7 +181,7 @@ class SoloGameScene extends Scene {
     this.hideBlocks();
     this.blurGUI();
     sound.play('game_over', { volume: SFX_VOLUME });
-    // TODO: show gameOverOverlay (score info, flashing "Press R to retry")
+    this.showGameOverOverlay();
     if (this._score > this.getHighScore()) {
       this.setHighScore(this._score);
     }
@@ -206,7 +216,8 @@ class SoloGameScene extends Scene {
   spawnTetromino() {
     if (this._nextTetromino) {
       this._tetromino = this.getNewTetrominoOfType(this._nextTetromino.type);
-      // TODO: clear nextTetromino
+      // TODO: remove nextTetromino from container
+      this._nextTetromino = null;
     } else {
       this._tetromino = this.getNewRandomTetromino();
     }
@@ -636,16 +647,35 @@ class SoloGameScene extends Scene {
     this._gui = gui;
     this.addChild(gui);
 
+    const leftSidebar = new Container();
+    gui.addChild(leftSidebar);
+
+    const leftSidebarBackground = new Sprite(Texture.WHITE);
+    leftSidebarBackground.tint = 0x000000;
+    leftSidebarBackground.alpha = 0.1;
+    leftSidebarBackground.width = 150;
+    leftSidebarBackground.height = 400;
+    leftSidebar.addChild(leftSidebarBackground);
+
     const grid = new Grid();
     this._grid = grid;
+    grid.x = leftSidebar.width + 10;
     gui.addChild(grid);
 
     this._blocksContainer = grid.getBlocksContainer();
 
-    // TODO: add left sidebar
-    // TODO: add right sidebar
-    // TODO: center gui on window resize event
+    const rightSidebar = new Container();
+    rightSidebar.x = grid.x + grid.width + 10;
+    gui.addChild(rightSidebar);
 
+    const rightSidebarBackground = new Sprite(Texture.WHITE);
+    rightSidebarBackground.tint = 0x000000;
+    rightSidebarBackground.alpha = 0.1;
+    rightSidebarBackground.width = 150;
+    rightSidebarBackground.height = 400;
+    rightSidebar.addChild(rightSidebarBackground);
+
+    // TODO: center gui on emitted resize event
     // center gui on the screen
     this._gui.position.set(
       Math.floor(this.width / 2 - this._gui.width / 2),
@@ -654,13 +684,21 @@ class SoloGameScene extends Scene {
 
     const pauseOverlay = new PauseOverlay(this);
     this._pauseOverlay = pauseOverlay;
-
     pauseOverlay.position.set(
       Math.floor(this.width / 2 - pauseOverlay.width / 2),
       Math.floor(this.height / 2 - pauseOverlay.height / 2)
     );
     this.addChild(pauseOverlay);
     pauseOverlay.hide();
+
+    const gameOverOverlay = new GameOverOverlay(this);
+    this._gameOverOverlay = gameOverOverlay;
+    gameOverOverlay.position.set(
+      Math.floor(this.width / 2 - gameOverOverlay.width / 2),
+      Math.floor(this.height / 2 - gameOverOverlay.height / 2)
+    );
+    this.addChild(gameOverOverlay);
+    gameOverOverlay.hide();
 
     const countdownOverlay = new CountdownOverlay();
     this._countdownOverlay = countdownOverlay;

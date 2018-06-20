@@ -11,22 +11,12 @@ class ControlsScene extends Scene {
     this.onAnyActionDown = this.onAnyActionDown.bind(this);
 
     this.init();
-
-    // this.onTick = this.onTick.bind(this);
-    // sceneManager.app.ticker.add(this.onTick);
   }
 
   init() {
-    // TweenMax.to(this.background, 1, { alpha: 1 });
-    // this.background.tint = MAIN_MENU_BACKGROUND_COLOR;
+    // TODO: add controls
     // this.addControls();
-
     sound.play('bgm', { loop: true });
-
-    // TODO: remove when ready
-    setTimeout(() => {
-      // this.onAnyActionDown();
-    });
 
     this._actionListeners = [
       InputManager.getInstance().onActionDown(actions.ANY, this.onAnyActionDown)
@@ -43,11 +33,6 @@ class ControlsScene extends Scene {
   }
 
   // addControls() {
-  //   console.log(this);
-  // }
-
-  // onTick() {
-  //   super.onTick();
   // }
 }
 
