@@ -42,6 +42,7 @@ class SoloGameScene extends Scene {
     this.onHardDropActionDown = this.onHardDropActionDown.bind(this);
     this.onPauseActionDown = this.onPauseActionDown.bind(this);
     this.onRetryActionDown = this.onRetryActionDown.bind(this);
+    this.onMuteActionDown = this.onMuteActionDown.bind(this);
     this.onTick = this.onTick.bind(this);
 
     this._inputManager = InputManager.getInstance();
@@ -421,6 +422,7 @@ class SoloGameScene extends Scene {
     this._inputManager.onActionDown(actions.HARD_DROP, this.onHardDropActionDown);
     this._inputManager.onActionDown(actions.PAUSE, this.onPauseActionDown);
     this._inputManager.onActionDown(actions.RETRY, this.onRetryActionDown);
+    this._inputManager.onActionDown(actions.MUTE, this.onMuteActionDown);
   }
 
   actionsPrevented() {
@@ -503,6 +505,16 @@ class SoloGameScene extends Scene {
 
   onRetryActionDown() {
     this.retry();
+  }
+
+  onMuteActionDown() {
+    if (this._muted) {
+      sound.find('bgm').resume();
+      this._muted = false;
+    } else {
+      sound.find('bgm').pause();
+      this._muted = true;
+    }
   }
 
   onTick(delta) {

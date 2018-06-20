@@ -19,7 +19,8 @@ class Game {
       [actions.SOFT_DROP]: [keys.ARROW_DOWN],
       [actions.HARD_DROP]: [keys.SPACE],
       [actions.PAUSE]: [keys.P],
-      [actions.RETRY]: [keys.R]
+      [actions.RETRY]: [keys.R],
+      [actions.MUTE]: [keys.M]
     });
 
     this._sceneManager = new SceneManager({ app })

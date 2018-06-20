@@ -4,6 +4,7 @@ const keys = {
   ARROW_LEFT: 37,
   ARROW_RIGHT: 39,
   SPACE: 32,
+  M: 77,
   P: 80,
   R: 82,
   X: 88,

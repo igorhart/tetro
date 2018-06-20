@@ -7,7 +7,8 @@ const actions = {
   SOFT_DROP: 'SOFT_DROP',
   HARD_DROP: 'HARD_DROP',
   PAUSE: 'PAUSE',
-  RETRY: 'RETRY'
+  RETRY: 'RETRY',
+  MUTE: 'MUTE'
 };
 
 export default actions;

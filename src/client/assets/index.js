@@ -5,7 +5,7 @@ let assets = [
   },
   {
     name: 'clear',
-    url: 'assets/audio/clear3.mp3'
+    url: 'assets/audio/clear.mp3'
   },
   {
     name: 'game_over',
