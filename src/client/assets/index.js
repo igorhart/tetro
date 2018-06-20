@@ -12,6 +12,10 @@ let assets = [
     url: 'assets/audio/game_over.wav'
   },
   {
+    name: 'level_up',
+    url: 'assets/audio/level_up.wav'
+  },
+  {
     name: 'lock',
     url: 'assets/audio/lock.mp3'
   },

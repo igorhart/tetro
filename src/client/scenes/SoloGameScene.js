@@ -20,11 +20,17 @@ import {
   SHIFT_REPEAT_FIRST_TIME_EXTRA_FRAMES,
   FPS,
   GHOST_ALPHA,
-  // LINES_TO_CLEAR_PER_LEVEL,
+  LINES_TO_CLEAR_PER_LEVEL,
   MAX_SPEED_LEVEL,
   STARTING_LEVEL,
   STARTING_SCORE,
-  SFX_VOLUME
+  SFX_VOLUME,
+  SOFT_DROP_POINTS,
+  HARD_DROP_POINTS,
+  SINGLE_CLEAR_POINTS,
+  DOUBLE_CLEAR_POINTS,
+  TRIPLE_CLEAR_POINTS,
+  TETRIS_CLEAR_POINTS
 } from 'client/constants/game';
 import { numericSort } from 'client/utils';
 
@@ -74,9 +80,10 @@ class SoloGameScene extends Scene {
     this._nextTetromino = null;
 
     this._linesCleared = 0;
+    this._level = STARTING_LEVEL;
     this._score = STARTING_SCORE;
     this._highScore = this.getHighScore();
-    this._level = STARTING_LEVEL;
+
     this.resetDropCounter();
     this.resetDropRepeatCounter();
     this.resetShiftRepeatCounter();
@@ -287,6 +294,7 @@ class SoloGameScene extends Scene {
     if (!this.shiftTetromino([0, 1])) {
       this.lockTetromino(() => {
         this.clearLines(() => {
+          this.resetDropCounter();
           this.spawnTetromino();
         });
       });
@@ -295,20 +303,23 @@ class SoloGameScene extends Scene {
     return true;
   }
 
-  hardDropTetromino() {
+  hardDropTetromino(cb) {
     this.resetDropCounter();
     const y = this._tetromino._gridPosition[1];
     const ghostY = this._ghost._gridPosition[1];
-    if (this.shiftTetromino([0, ghostY - y])) {
+    const distance = ghostY - y;
+    if (this.shiftTetromino([0, distance])) {
       // TODO: display ray from above after quick fall
       this.lockTetromino(() => {
         this.clearLines(() => {
+          this.resetDropCounter();
           this.spawnTetromino();
+          cb(distance);
         });
       });
-      return false;
+    } else {
+      cb();
     }
-    return true;
   }
 
   lockTetromino(cb) {
@@ -384,8 +395,7 @@ class SoloGameScene extends Scene {
               child.y += GRID_UNIT * rowsToShiftDown;
             }
           });
-
-          // TODO: this._linesCleared += fullRowIndexes;
+          this.addLinesCleared(fullRowIndexes.length);
           this._clearing = false;
           cb();
         }
@@ -397,6 +407,41 @@ class SoloGameScene extends Scene {
       this._clearing = false;
       cb();
     }
+  }
+
+  addScorePoints(points) {
+    this._score += points;
+    // TODO: this._scoreBoard.value = this._score;
+  }
+
+  addLinesCleared(count) {
+    const prevLevel = this._level;
+    this._linesCleared += count;
+    this._level = Math.floor(this._linesCleared / LINES_TO_CLEAR_PER_LEVEL);
+    // TODO: this._levelBoard.value = this._level;
+    // TODO: update n/10 lines to clear for next level
+
+    if (prevLevel < this._level) {
+      sound.play('level_up', { volume: SFX_VOLUME });
+      // TODO: show lvl up effect
+    }
+
+    let pointsToAdd = 0;
+    switch (count) {
+      case 1:
+        pointsToAdd = SINGLE_CLEAR_POINTS * (this._level || 1);
+        break;
+      case 2:
+        pointsToAdd = DOUBLE_CLEAR_POINTS * (this._level || 1);
+        break;
+      case 3:
+        pointsToAdd = TRIPLE_CLEAR_POINTS * (this._level || 1);
+        break;
+      case 4:
+        pointsToAdd = TETRIS_CLEAR_POINTS * (this._level || 1);
+    }
+
+    this.addScorePoints(pointsToAdd);
   }
 
   resetDropCounter() {
@@ -477,10 +522,11 @@ class SoloGameScene extends Scene {
     if (this.actionsPrevented()) {
       return;
     }
-    // TODO: +1 point for every grid unit traveled
+
     this.resetDropRepeatCounter(DROP_REPEAT_FIRST_TIME_EXTRA_FRAMES);
     if (this.dropTetromino()) {
       sound.play('shift', { volume: SFX_VOLUME });
+      this.addScorePoints(SOFT_DROP_POINTS);
     }
   }
 
@@ -488,8 +534,11 @@ class SoloGameScene extends Scene {
     if (this.actionsPrevented()) {
       return;
     }
-    // TODO: +2 points for every grid unit traveled
-    this.hardDropTetromino();
+    this.hardDropTetromino(distance => {
+      if (distance) {
+        this.addScorePoints(HARD_DROP_POINTS * distance);
+      }
+    });
   }
 
   onPauseActionDown() {
@@ -526,6 +575,7 @@ class SoloGameScene extends Scene {
         this.resetDropRepeatCounter();
         if (this.dropTetromino()) {
           sound.play('shift', { volume: SFX_VOLUME });
+          this.addScorePoints(SOFT_DROP_POINTS);
         }
       } else {
         this._dropRepeatCounter -= delta;

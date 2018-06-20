@@ -15,7 +15,9 @@
   "rules": {
     "arrow-parens": ["error", "as-needed"],
     "comma-dangle": 0,
+    "consistent-return": 0,
     "class-methods-use-this": 0,
+    "default-case": 0,
     "function-paren-newline": 0,
     "import/no-duplicates": 0,
     "import/no-extraneous-dependencies": [
