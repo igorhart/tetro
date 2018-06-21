@@ -1,6 +1,6 @@
 {
   "name": "tetro",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Retro Tetris game.",
   "author": "Igor Skuhar",
   "private": true,
