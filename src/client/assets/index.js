@@ -36,6 +36,7 @@ let assets = [
 if (window.devicePixelRatio > 1) {
   assets = [
     ...assets,
+    { name: 'controls', url: 'assets/textures/controls@2x.png' },
     { name: 'block', url: 'assets/textures/block@2x.png' },
     { name: 'grid_inner', url: 'assets/textures/grid_inner@2x.png' },
     { name: 'grid_outer', url: 'assets/textures/grid_outer@2x.png' },
@@ -44,6 +45,7 @@ if (window.devicePixelRatio > 1) {
 } else {
   assets = [
     ...assets,
+    { name: 'controls', url: 'assets/textures/controls.png' },
     { name: 'block', url: 'assets/textures/block.png' },
     { name: 'grid_inner', url: 'assets/textures/grid_inner.png' },
     { name: 'grid_outer', url: 'assets/textures/grid_outer.png' },
