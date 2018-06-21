@@ -1,5 +1,5 @@
 import { loader, sound } from 'pixi.js';
-// import { SteppedEase, TweenMax } from 'gsap/all';
+// import { SteppedEase, TweenMax } from 'gsap';
 import Preloader from 'client/gui/Preloader';
 import Scene from 'client/modules/Scene';
 import { BGM_VOLUME } from 'client/constants/game';

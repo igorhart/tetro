@@ -1,5 +1,5 @@
 import { Container, filters, sound } from 'pixi.js';
-import { TimelineMax, TweenMax } from 'gsap/all';
+import { TimelineMax, TweenMax } from 'gsap';
 import InputManager from 'client/managers/InputManager';
 import Grid from 'client/gui/Grid';
 import Bag from 'client/modules/Bag';
