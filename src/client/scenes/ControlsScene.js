@@ -6,8 +6,6 @@ import actions from 'client/constants/actions';
 import colors from 'client/constants/colors';
 import scenes from 'client/constants/scenes';
 
-console.log(Elastic);
-
 class ControlsScene extends Scene {
   constructor({ id }) {
     super({ id });
