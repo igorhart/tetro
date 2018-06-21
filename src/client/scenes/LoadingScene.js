@@ -1,33 +1,27 @@
-import { loader } from 'pixi.js';
-import { RoughEase, TweenMax } from 'gsap/all';
-import Preloader from 'client/modules/Preloader';
+import { loader, sound } from 'pixi.js';
+// import { SteppedEase, TweenMax } from 'gsap/all';
+import Preloader from 'client/gui/Preloader';
 import Scene from 'client/modules/Scene';
+import { BGM_VOLUME } from 'client/constants/game';
+import scenes from 'client/constants/scenes';
 import assets from 'client/assets';
 
-export default class LoadingScene extends Scene {
-  constructor({ id, sceneManager }) {
-    super({ id, sceneManager });
+class LoadingScene extends Scene {
+  constructor({ id }) {
+    super({ id });
 
     this.init();
-
-    this.onTick = this.onTick.bind(this);
-    sceneManager.app.ticker.add(this.onTick);
   }
 
   init() {
-    // optional scene background
-    // this.background.alpha = 1;
-    // this.background.tint = 0xff0000;
     this._preloader = this.addPreloader();
     this.loadAssets();
   }
 
   addPreloader() {
     const preloader = new Preloader();
-    preloader.x = this.width / 2;
-    preloader.y = this.height / 2;
+    preloader.position.set(Math.floor(this.width / 2), Math.floor(this.height / 2));
     this.addChild(preloader);
-
     return preloader;
   }
 
@@ -35,49 +29,32 @@ export default class LoadingScene extends Scene {
     // simulate loading
     // TweenMax.to(this._preloader, 5, {
     //   progress: 100,
-    //   ease: SteppedEase.config(12),
+    //   ease: SteppedEase.config(10),
     //   onComplete: () => {
-    //     this._sceneManager.loadScene('soloGame');
+    //     this.sceneManager.loadScene(scenes.CONTROLS);
     //   }
     // });
 
-    if (assets.length) {
-      loader
-        .add(assets)
-        .on('progress', () => {
-          this._preloader.progress = loader.progress;
-        })
-        .on('complete', () => {
-          // TODO: .loadScene('mainMenu') when ready
-          this.sceneManager.loadScene('soloGame');
-        })
-        .load();
-    } else {
-      this._preloader.progress = 100;
-      setTimeout(() => {
-        // TODO: .loadScene('mainMenu') when ready
-        this.sceneManager.loadScene('soloGame');
-      });
-    }
-  }
+    sound.add('bgm', {
+      url: 'assets/audio/bgm.mp3',
+      singleInstance: true,
+      volume: BGM_VOLUME
+    });
 
-  onTick() {
-    super.onTick();
-    // center preloader on the screen
-    this._preloader.x = this.width / 2;
-    this._preloader.y = this.height / 2;
+    loader
+      .add(assets)
+      .on('progress', () => {
+        this._preloader.progress = loader.progress;
+      })
+      .on('complete', () => {
+        this.sceneManager.loadScene(scenes.CONTROLS);
+      })
+      .load();
   }
 
   onExit(cb) {
-    // blink like broken neon
-    TweenMax.to(this._preloader.progressBar, 0.5, {
-      alpha: 0,
-      ease: RoughEase.ease.config({ points: 20, strength: 10, randomize: true, clamp: true }),
-      delay: 0.5,
-      onComplete: () => {
-        this.app.ticker.remove(this.onTick);
-        super.onExit(cb);
-      }
-    });
+    super.onExit(cb);
   }
 }
+
+export default LoadingScene;

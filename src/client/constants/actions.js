@@ -1,0 +1,14 @@
+const actions = {
+  ANY: 'ANY',
+  ROTATE_CW: 'ROTATE_CW',
+  ROTATE_CCW: 'ROTATE_CCW',
+  SHIFT_LEFT: 'SHIFT_LEFT',
+  SHIFT_RIGHT: 'SHIFT_RIGHT',
+  SOFT_DROP: 'SOFT_DROP',
+  HARD_DROP: 'HARD_DROP',
+  PAUSE: 'PAUSE',
+  RETRY: 'RETRY',
+  MUTE: 'MUTE'
+};
+
+export default actions;

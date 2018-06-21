@@ -13,7 +13,6 @@ module.exports = merge(common, {
     dev: {
       stats: false
     },
-    hot: true,
     open: true,
     host: process.env.HOST,
     port: process.env.PORT
@@ -27,11 +26,10 @@ module.exports = merge(common, {
     ]
   },
   plugins: [
-    new webpack.NamedModulesPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
     new webpack.DefinePlugin({
       'process.env.HOST': JSON.stringify(process.env.HOST || 'localhost'),
-      'process.env.PORT': JSON.stringify(process.env.PORT || 80)
+      'process.env.PORT': JSON.stringify(process.env.PORT || 80),
+      VERSION: JSON.stringify(process.env.npm_package_version)
     }),
     new FriendlyErrorsPlugin({
       onErrors: (severity, errors) => {

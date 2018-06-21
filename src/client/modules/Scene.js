@@ -1,11 +1,12 @@
 import { Container, Sprite, Texture } from 'pixi.js';
+import SceneManager from 'client/managers/SceneManager';
 
-export default class Scene extends Container {
-  constructor({ id, sceneManager }) {
+class Scene extends Container {
+  constructor({ id }) {
     super();
 
     this._id = id;
-    this._sceneManager = sceneManager;
+    this._sceneManager = SceneManager.getInstance();
     this._background = this.addBackground();
 
     this.onTick = this.onTick.bind(this);
@@ -44,3 +45,5 @@ export default class Scene extends Container {
     cb(this._id);
   }
 }
+
+export default Scene;
