@@ -1,5 +1,5 @@
 import { Container, extras, Sprite } from 'pixi.js';
-import { TweenMax } from 'gsap/all';
+import { TweenMax } from 'gsap';
 import colors from 'client/constants/colors';
 
 class NumericDisplay extends Container {
