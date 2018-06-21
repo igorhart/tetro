@@ -1,5 +1,6 @@
 import { Container, extras, sound } from 'pixi.js';
-import { Expo, TweenMax } from 'gsap';
+import { TweenMax } from 'gsap/all';
+import { Expo } from 'gsap/src/uncompressed/easing/EasePack';
 import colors from 'client/constants/colors';
 import { SFX_VOLUME } from 'client/constants/game';
 

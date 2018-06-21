@@ -1,5 +1,5 @@
 import { Container, extras, Sprite, Texture } from 'pixi.js';
-import { TweenMax } from 'gsap';
+import { TweenMax } from 'gsap/all';
 import colors from 'client/constants/colors';
 
 class GameOverOverlay extends Container {

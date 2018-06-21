@@ -1,5 +1,6 @@
 import { extras, sound, Sprite, utils } from 'pixi.js';
-import { Elastic, TweenMax } from 'gsap';
+import { TweenMax } from 'gsap/all';
+import { Elastic } from 'gsap/src/uncompressed/easing/EasePack';
 import InputManager from 'client/managers/InputManager';
 import Scene from 'client/modules/Scene';
 import actions from 'client/constants/actions';
