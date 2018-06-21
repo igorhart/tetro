@@ -21,7 +21,7 @@ class PauseOverlay extends Container {
   }
 
   addText() {
-    const text = new extras.BitmapText('PAUSE', {
+    const text = new extras.BitmapText('Pause', {
       align: 'center',
       font: {
         name: 'SF Alien Encounters',

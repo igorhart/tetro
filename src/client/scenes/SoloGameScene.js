@@ -1,4 +1,4 @@
-import { Container, filters, sound, Sprite, Texture } from 'pixi.js';
+import { Container, filters, sound } from 'pixi.js';
 import { TimelineMax, TweenMax } from 'gsap/all';
 import InputManager from 'client/managers/InputManager';
 import Grid from 'client/gui/Grid';
@@ -8,6 +8,8 @@ import GridState from 'client/modules/GridState';
 import CountdownOverlay from 'client/gui/CountdownOverlay';
 import GameOverOverlay from 'client/gui/GameOverOverlay';
 import PauseOverlay from 'client/gui/PauseOverlay';
+import NumericDisplay from 'client/gui/NumericDisplay';
+import TetrominoDisplay from 'client/gui/TetrominoDisplay';
 import Scene from 'client/modules/Scene';
 import Tetromino from 'client/modules/Tetromino';
 import { types } from 'client/tetrominoData';
@@ -76,14 +78,17 @@ class SoloGameScene extends Scene {
 
     this._tetromino = null;
     this._ghost = null;
-
-    // TODO: this._nextTetrominoContainer.removeChildren();
     this._nextTetromino = null;
 
     this._linesCleared = 0;
     this._level = STARTING_LEVEL;
     this._score = STARTING_SCORE;
     this._highScore = this.getHighScore();
+
+    this._levelDisplay.value = this._level;
+    this._scoreDisplay.value = this._score;
+    this._highScoreDisplay.value = this._highScore;
+    this._nextDisplay.type = null;
 
     this.resetDropCounter();
     this.resetDropRepeatCounter();
@@ -216,12 +221,12 @@ class SoloGameScene extends Scene {
   spawnTetromino() {
     if (this._nextTetromino) {
       this._tetromino = this.getNewTetrominoOfType(this._nextTetromino.type);
-      // TODO: remove nextTetromino from container
       this._nextTetromino = null;
     } else {
       this._tetromino = this.getNewRandomTetromino();
     }
     this._nextTetromino = this.getNewRandomTetromino();
+    this._nextDisplay.type = this._nextTetromino.type;
 
     this._ghost = this.getNewTetrominoOfType(this._tetromino.type);
     this._ghost.alpha = GHOST_ALPHA;
@@ -445,15 +450,14 @@ class SoloGameScene extends Scene {
 
   addScorePoints(points) {
     this._score += points;
-    // TODO: this._scoreBoard.value = this._score;
+    this._scoreDisplay.value = this._score;
   }
 
   addLinesCleared(count) {
     const prevLevel = this._level;
     this._linesCleared += count;
     this._level = Math.floor(this._linesCleared / LINES_TO_CLEAR_PER_LEVEL);
-    // TODO: this._levelBoard.value = this._level;
-    // TODO: update n/10 lines to clear for next level
+    this._levelDisplay.value = this._level;
 
     if (prevLevel < this._level) {
       sound.play('level_up', { volume: SFX_VOLUME });
@@ -587,6 +591,9 @@ class SoloGameScene extends Scene {
   }
 
   onRetryActionDown() {
+    if (this._counting) {
+      return;
+    }
     this.retry();
   }
 
@@ -647,36 +654,47 @@ class SoloGameScene extends Scene {
     this._gui = gui;
     this.addChild(gui);
 
-    const leftSidebar = new Container();
-    gui.addChild(leftSidebar);
-
-    const leftSidebarBackground = new Sprite(Texture.WHITE);
-    leftSidebarBackground.tint = 0x000000;
-    leftSidebarBackground.alpha = 0.1;
-    leftSidebarBackground.width = 150;
-    leftSidebarBackground.height = 400;
-    leftSidebar.addChild(leftSidebarBackground);
-
     const grid = new Grid();
     this._grid = grid;
-    grid.x = leftSidebar.width + 10;
     gui.addChild(grid);
 
     this._blocksContainer = grid.getBlocksContainer();
 
     const rightSidebar = new Container();
-    rightSidebar.x = grid.x + grid.width + 10;
+    rightSidebar.x = grid.x + grid.width + 20;
     gui.addChild(rightSidebar);
 
-    const rightSidebarBackground = new Sprite(Texture.WHITE);
-    rightSidebarBackground.tint = 0x000000;
-    rightSidebarBackground.alpha = 0.1;
-    rightSidebarBackground.width = 150;
-    rightSidebarBackground.height = 400;
-    rightSidebar.addChild(rightSidebarBackground);
+    const nextDisplay = new TetrominoDisplay({
+      label: 'Next'
+    });
+    rightSidebar.addChild(nextDisplay);
+    nextDisplay.y = 7;
+    this._nextDisplay = nextDisplay;
+
+    const levelDisplay = new NumericDisplay({
+      label: 'Level'
+    });
+    rightSidebar.addChild(levelDisplay);
+    levelDisplay.y = nextDisplay.y + nextDisplay.height + 20;
+    this._levelDisplay = levelDisplay;
+
+    const scoreDisplay = new NumericDisplay({
+      label: 'Score',
+      valueSize: 24
+    });
+    scoreDisplay.y = levelDisplay.y + levelDisplay.height + 20;
+    rightSidebar.addChild(scoreDisplay);
+    this._scoreDisplay = scoreDisplay;
+
+    const highScoreDisplay = new NumericDisplay({
+      label: 'High score',
+      valueSize: 24
+    });
+    highScoreDisplay.y = scoreDisplay.y + scoreDisplay.height + 20;
+    rightSidebar.addChild(highScoreDisplay);
+    this._highScoreDisplay = highScoreDisplay;
 
     // TODO: center gui on emitted resize event
-    // center gui on the screen
     this._gui.position.set(
       Math.floor(this.width / 2 - this._gui.width / 2),
       Math.floor(this.height / 2 - this._gui.height / 2)

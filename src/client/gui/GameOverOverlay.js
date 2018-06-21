@@ -21,7 +21,7 @@ class GameOverOverlay extends Container {
   }
 
   addText() {
-    const text = new extras.BitmapText('GAME OVER', {
+    const text = new extras.BitmapText('Game Over', {
       align: 'center',
       font: {
         name: 'SF Alien Encounters',
