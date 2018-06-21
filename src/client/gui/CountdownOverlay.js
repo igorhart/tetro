@@ -37,14 +37,22 @@ class CountdownOverlay extends Container {
     this._text.alpha = 0;
     this._text.scale.set(2);
     sound.play('count', { volume: SFX_VOLUME });
-    this._countdownAnimation = TweenMax.to(this._text, 0.6, {
+
+    // PixiPlugin doesn't work on production, that's why...
+    const tweenProps = {
+      alpha: 0,
+      scale: 2
+    };
+
+    this._countdownAnimation = TweenMax.to(tweenProps, 0.6, {
       alpha: 1,
-      pixi: {
-        scaleX: 1,
-        scaleY: 1
-      },
+      scale: 1,
       ease: Expo.easeOut,
       repeat: 3,
+      onUpdate: () => {
+        this._text.alpha = tweenProps.alpha;
+        this._text.scale.set(tweenProps.scale);
+      },
       onRepeat: () => {
         if (count > 1) {
           count -= 1;
