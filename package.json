@@ -71,9 +71,14 @@
     "webpack-serve": "^1.0.2"
   },
   "dependencies": {
+    "body-parser": "^1.18.3",
     "express": "^4.16.3",
     "gsap": "^2.0.1",
+    "morgan": "^1.9.0",
+    "pg": "^7.4.3",
+    "pg-hstore": "^2.3.2",
     "pixi-sound": "^2.0.2",
-    "pixi.js": "^4.8.0"
+    "pixi.js": "^4.8.0",
+    "sequelize": "^4.38.0"
   }
 }
