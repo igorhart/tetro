@@ -1,4 +1,5 @@
 import { Container, extras, Sprite } from 'pixi.js';
+import { TweenMax } from 'gsap/all';
 import colors from 'client/constants/colors';
 
 class NumericDisplay extends Container {
@@ -51,8 +52,20 @@ class NumericDisplay extends Container {
   }
 
   set value(value) {
+    if (value === this._value) {
+      return;
+    }
+
+    const valueObj = { value: this._value };
+    const duration = value - this._value === 1 ? 0 : 0.2;
     this._value = value;
-    this._valueText.text = value.toString();
+
+    TweenMax.to(valueObj, duration, {
+      value,
+      onUpdate: () => {
+        this._valueText.text = Math.floor(valueObj.value).toString();
+      }
+    });
   }
 }
 
