@@ -32,8 +32,21 @@ class ControlsScene extends Scene {
     controls.scale.set(0.5);
     this.addChild(controls);
 
-    TweenMax.to(controls, 1, { alpha: 1, ease: Elastic.easeOut });
-    TweenMax.to(controls.scale, 1, { x: 1, y: 1, ease: Elastic.easeOut });
+    // PixiPlugin doesn't work on production, that's why...
+    const tweenProps = {
+      alpha: 0,
+      scale: 0.5
+    };
+
+    TweenMax.to(tweenProps, 1, {
+      alpha: 1,
+      scale: 1,
+      ease: Elastic.easeOut,
+      onUpdate: () => {
+        controls.alpha = tweenProps.alpha;
+        controls.scale.set(tweenProps.scale);
+      }
+    });
 
     const title = new extras.BitmapText('CONTROLS', {
       align: 'center',
