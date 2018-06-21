@@ -32,7 +32,8 @@ class ControlsScene extends Scene {
     controls.scale.set(0.5);
     this.addChild(controls);
 
-    TweenMax.to(controls, 1, { alpha: 1, pixi: { scaleX: 1, scaleY: 1 }, ease: Elastic.easeOut });
+    TweenMax.to(controls, 1, { alpha: 1, ease: Elastic.easeOut });
+    TweenMax.to(controls.scale, 1, { x: 1, y: 1, ease: Elastic.easeOut });
 
     const title = new extras.BitmapText('CONTROLS', {
       align: 'center',
