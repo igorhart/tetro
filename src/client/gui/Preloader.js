@@ -1,5 +1,4 @@
 import { Container, Graphics } from 'pixi.js';
-import { GLOW_PADDING } from 'client/constants/dimensions';
 
 class Preloader extends Container {
   constructor({ progress } = { progress: 0 }) {
@@ -15,32 +14,22 @@ class Preloader extends Container {
   }
 
   createProgressBar() {
-    this.pivot.set(48, 32);
+    this.pivot.set(45, 30);
 
     const progressBackground = new Graphics();
     progressBackground.beginFill(0x000000, 0.2);
-    progressBackground.drawRect(0, 0, 96, 32);
-    progressBackground.drawRect(32, 32, 32, 32);
+    progressBackground.drawRect(0, 0, 90, 30);
+    progressBackground.drawRect(30, 30, 30, 30);
     progressBackground.endFill();
     this.addChild(progressBackground);
 
     const progressContainer = new Container();
     this.addChild(progressContainer);
 
-    // because otherwise glow filter is clipped by the container... :/
-    const spacer = new Graphics();
-    spacer.position.set(-GLOW_PADDING, -GLOW_PADDING);
-    spacer.beginFill(0x000000, 0);
-    spacer.drawRect(0, 0, 96 + GLOW_PADDING * 2, 64 + GLOW_PADDING * 2);
-    spacer.endFill();
-    progressContainer.addChild(spacer);
-
     const mask = new Graphics();
     mask.beginFill(0x000000, 1);
-    mask.drawRect(1, 1, 30, 30);
-    mask.drawRect(33, 1, 30, 30);
-    mask.drawRect(65, 1, 30, 30);
-    mask.drawRect(33, 33, 30, 30);
+    mask.drawRect(0, 0, 90, 30);
+    mask.drawRect(30, 30, 30, 30);
     mask.endFill();
     progressContainer.addChild(mask);
 
@@ -55,9 +44,9 @@ class Preloader extends Container {
     this._progressBar.beginFill(0xfe2880, 1);
     this._progressBar.drawRect(
       0,
-      64 - (64 / 100) * this._progress,
-      96,
-      (64 / 100) * this._progress
+      60 - (60 / 100) * this._progress,
+      90,
+      (60 / 100) * this._progress
     );
     this._progressBar.endFill();
   }
