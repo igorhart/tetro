@@ -55,7 +55,7 @@ class ControlsScene extends Scene {
         size: 48 * window.devicePixelRatio
       }
     });
-    title.tint = colors.CYAN;
+    title.tint = colors.PURPLE;
     title.anchor.set(0.5);
     title.position.set(
       Math.floor(this.width / 2),

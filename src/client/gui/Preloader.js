@@ -1,4 +1,5 @@
 import { Container, Graphics } from 'pixi.js';
+import colors from 'client/constants/colors';
 
 class Preloader extends Container {
   constructor({ progress } = { progress: 0 }) {
@@ -17,7 +18,7 @@ class Preloader extends Container {
     this.pivot.set(45, 30);
 
     const progressBackground = new Graphics();
-    progressBackground.beginFill(0x000000, 0.2);
+    progressBackground.beginFill(0x000000, 0.1);
     progressBackground.drawRect(0, 0, 90, 30);
     progressBackground.drawRect(30, 30, 30, 30);
     progressBackground.endFill();
@@ -41,7 +42,7 @@ class Preloader extends Container {
 
   update() {
     this._progressBar.clear();
-    this._progressBar.beginFill(0xfe2880, 1);
+    this._progressBar.beginFill(colors.PINK, 1);
     this._progressBar.drawRect(
       0,
       60 - (60 / 100) * this._progress,
