@@ -2,7 +2,6 @@ import { extras, sound, Sprite, utils } from 'pixi.js';
 import { Elastic, TweenMax } from 'gsap/all';
 import InputManager from 'client/managers/InputManager';
 import Scene from 'client/modules/Scene';
-import actions from 'client/constants/actions';
 import colors from 'client/constants/colors';
 import scenes from 'client/constants/scenes';
 
@@ -19,9 +18,7 @@ class ControlsScene extends Scene {
     this.addControls();
     sound.play('bgm', { loop: true });
 
-    this._actionListeners = [
-      InputManager.getInstance().onActionDown(actions.ANY, this.onAnyActionDown)
-    ];
+    this._actionListeners = [InputManager.getInstance().onActionDown('*', this.onAnyActionDown)];
   }
 
   addControls() {
@@ -55,7 +52,7 @@ class ControlsScene extends Scene {
         size: 48 * window.devicePixelRatio
       }
     });
-    title.tint = colors.CYAN;
+    title.tint = colors.PURPLE;
     title.anchor.set(0.5);
     title.position.set(
       Math.floor(this.width / 2),

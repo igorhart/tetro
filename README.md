@@ -29,9 +29,11 @@ Play here: https://tetro.herokuapp.com/
 ## Todo
 
 - Center elements on window resize via EventEmitter
+- Pause game on tab change
 - Write unit tests
 - DualShock 4 support via Gamepad API
 - Implement "sticky" gravity
+- Implement line clear combos
 - Add visual effect for hard drop
 - Add visual effect for level up
 - Assets hashing

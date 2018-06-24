@@ -19,7 +19,7 @@ class Grid extends Container {
 
   createGrid() {
     const borderTop = new Sprite(utils.TextureCache.grid_outer);
-    borderTop.tint = colors.GRID;
+    borderTop.tint = colors.PURPLE;
     this.addChild(borderTop);
 
     const borders = new extras.TilingSprite(
@@ -27,19 +27,19 @@ class Grid extends Container {
       this.width,
       GRID_UNIT * GRID_ROWS - GLOW_PADDING * 2 - BLOCK_GAP
     );
-    borders.tint = colors.GRID;
+    borders.tint = colors.PURPLE;
     borders.y = this.height;
     this.addChild(borders);
 
     const borderBottom = new Sprite(utils.TextureCache.grid_outer);
-    borderBottom.tint = colors.GRID;
+    borderBottom.tint = colors.PURPLE;
     borderBottom.rotation = deg2rad(180);
     borderBottom.x = borderBottom.width;
     borderBottom.y = this.height + borderBottom.height;
     this.addChild(borderBottom);
 
     const lines = new Graphics();
-    lines.beginFill(colors.GRID, 1);
+    lines.beginFill(colors.PURPLE, 1);
     for (let i = 0; i < GRID_COLS; i += 1) {
       lines.drawRect(i * GRID_UNIT - BLOCK_GAP, 0, BLOCK_GAP, GRID_ROWS * GRID_UNIT - BLOCK_GAP);
     }

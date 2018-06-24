@@ -26,7 +26,7 @@ class TetrominoDisplay extends Container {
         size: 24 * window.devicePixelRatio
       }
     });
-    label.tint = colors.GRID;
+    label.tint = colors.PURPLE;
     label.anchor.set(0, 0.5);
     label.position.set(0, Math.floor(20 + label.height / 2));
     this.addChild(label);

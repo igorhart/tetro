@@ -1,5 +1,4 @@
 const actions = {
-  ANY: 'ANY',
   ROTATE_CW: 'ROTATE_CW',
   ROTATE_CCW: 'ROTATE_CCW',
   SHIFT_LEFT: 'SHIFT_LEFT',
