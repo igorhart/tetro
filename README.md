@@ -10,9 +10,10 @@ Play here: https://tetro.herokuapp.com/
 - [SRS](http://tetris.wikia.com/wiki/SRS) (Super Rotation System)
 - [DAS](http://tetris.wikia.com/wiki/DAS) (Delayed Auto Shift)
 - 7-bag randomizer
-- Hard drop
 - Level based drop speed
 - Next piece preview
+- "Ghost" preview
+- Hard drop
 - Scoring
 - Local high score
 - Count down on resume
