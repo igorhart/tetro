@@ -1,4 +1,4 @@
-import inputActions from 'client/constants/actions';
+import GamepadAPI from 'client/managers/GamepadAPI';
 
 let _instance = null;
 
@@ -11,6 +11,8 @@ class InputManager {
       this._actionsDown = [];
       this._listeners = [];
 
+      this.onGamepadButtonDown = this.onGamepadButtonDown.bind(this);
+      this.onGamepadButtonUp = this.onGamepadButtonUp.bind(this);
       this.onKeyDown = this.onKeyDown.bind(this);
       this.onKeyUp = this.onKeyUp.bind(this);
 
@@ -73,6 +75,24 @@ class InputManager {
     this._listeners = this._listeners.filter(l => l !== listener);
   }
 
+  onGamepadButtonDown(event) {
+    const action = this.keyToAction(event.button);
+    const type = 'down';
+
+    if (!this.isActionDown(action)) {
+      this._actionsDown.push(action);
+      this.runListeners(action, type);
+    }
+  }
+
+  onGamepadButtonUp(event) {
+    const action = this.keyToAction(event.button);
+    const type = 'up';
+
+    this._actionsDown = this._actionsDown.filter(a => a !== action);
+    this.runListeners(action, type);
+  }
+
   onKeyDown(event) {
     const action = this.keyToAction(event.keyCode);
     const type = 'down';
@@ -95,7 +115,7 @@ class InputManager {
     if (this._keyMap[key]) {
       return this._keyMap[key];
     }
-    return inputActions.ANY;
+    return '*';
   }
 
   isActionDown(action) {
@@ -106,7 +126,7 @@ class InputManager {
     this._listeners.forEach(listener => {
       if (
         (listener.action === action && listener.type === type) ||
-        (listener.action === inputActions.ANY && listener.type === type)
+        (listener.action === '*' && listener.type === type)
       ) {
         listener.cb();
       }
@@ -114,6 +134,12 @@ class InputManager {
   }
 
   addEventListeners() {
+    // gamepad
+    // TODO: when gamepad button events are added to the spec, replace gamepadAPI with window
+    const gamepadAPI = new GamepadAPI();
+    gamepadAPI.on('gamepadbuttondown', this.onGamepadButtonDown);
+    gamepadAPI.on('gamepadbuttonup', this.onGamepadButtonUp);
+
     // keyboard
     document.addEventListener('keydown', this.onKeyDown);
     document.addEventListener('keyup', this.onKeyUp);
