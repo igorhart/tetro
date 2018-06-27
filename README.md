@@ -19,6 +19,7 @@ Play here: https://tetro.herokuapp.com/
 - Count down on resume
 - Flexible InputManager based on actions
 - Keyboard controls cheatsheet
+- Gamepad support (DualShock 4)
 - Pause
 - Retry
 - Mute / Unmute BGM
@@ -29,20 +30,25 @@ Play here: https://tetro.herokuapp.com/
 ## Todo
 
 - Center elements on window resize via EventEmitter
-- Pause game on tab change
-- Write unit tests
-- Implement "sticky" gravity
-- Implement line clear combos
+- Lock delay
+- "Sticky" gravity
+- Line clear combos
 - Add visual effect for hard drop
 - Add visual effect for level up
+- Duel mode (2P) via socket.IO
+- Write unit tests
 - Assets hashing
 - Move localStorage interaction to separate module
 - Split SoloGameScene into smaller modules
-- Duel mode (2P) via socket.IO
+- Pause game on tab change
 
 ## CLI
 
-To launch in development mode, clone the repo and run script:
+To launch in development mode, clone the repo and run the following:
+
+```
+npm install
+```
 
 ```
 npm run dev:web
