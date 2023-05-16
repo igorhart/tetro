@@ -2,7 +2,7 @@
 
 Retro tetris game.
 
-Play here: https://tetro.herokuapp.com/
+Play here: https://tetro.onrender.com
 
 ## Features
 
